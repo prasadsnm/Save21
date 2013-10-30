@@ -7,12 +7,29 @@
 //
 
 #import "Save21AppDelegate.h"
+#import <Parse/Parse.h>
+#import "Reachability.h"
+#import "MTReachabilityManager.h"
 
 @implementation Save21AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    [Parse setApplicationId:@"lnyR8Tej9yLqrWO4xZzNHErknO1xkPTaADmTR5ZN"
+                  clientKey:@"dPkCTIuS0KAkxjvvvoERaRyYzQPUAhj3a9UDdLBJ"];
+    
+    //track the number of opens
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    
+    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
+    
+    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                           darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
+    
+    // Instantiate Shared Manager
+    [MTReachabilityManager sharedManager];
+    
     return YES;
 }
 							
