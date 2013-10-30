@@ -134,6 +134,7 @@
 		2243AE5118209CEF00619ECB /* MKNetworkOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE3618209CEF00619ECB /* MKNetworkOperation.m */; };
 		2243AE5218209CEF00619ECB /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE3918209CEF00619ECB /* Reachability.m */; };
 		2243AE5518209DDF00619ECB /* Leon_Austin_PrototypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE5418209DDF00619ECB /* Leon_Austin_PrototypeViewController.m */; };
+		227794ED1821B5F700102E79 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 227794EC1821B5F700102E79 /* Parse.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -342,6 +343,7 @@
 		2243AE3918209CEF00619ECB /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2243AE5318209DDF00619ECB /* Leon_Austin_PrototypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leon_Austin_PrototypeViewController.h; sourceTree = "<group>"; };
 		2243AE5418209DDF00619ECB /* Leon_Austin_PrototypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Leon_Austin_PrototypeViewController.m; sourceTree = "<group>"; };
+		227794EC1821B5F700102E79 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -359,6 +361,7 @@
 				2243AD4F18209B2700619ECB /* Security.framework in Frameworks */,
 				2243AD4D18209B2100619ECB /* SystemConfiguration.framework in Frameworks */,
 				2243AD49182099F500619ECB /* ImageIO.framework in Frameworks */,
+				227794ED1821B5F700102E79 /* Parse.framework in Frameworks */,
 				2243AD161820992A00619ECB /* UIKit.framework in Frameworks */,
 				2243AD121820992A00619ECB /* Foundation.framework in Frameworks */,
 				2243AD4B18209ADF00619ECB /* Parse.framework in Frameworks */,
@@ -400,6 +403,7 @@
 		2243AD101820992A00619ECB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				227794EC1821B5F700102E79 /* Parse.framework */,
 				2243AD5A18209B5800619ECB /* AudioToolbox.framework */,
 				2243AD5818209B5000619ECB /* CFNetwork.framework */,
 				2243AD5618209B4600619ECB /* CoreLocation.framework */,
@@ -1149,6 +1153,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/feiyangca/Documents/Save21,
+					/Users/feiyangca/Dropbox/Save21,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Save21/Save21-Prefix.pch";
@@ -1169,6 +1174,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/feiyangca/Documents/Save21,
+					/Users/feiyangca/Dropbox/Save21,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Save21/Save21-Prefix.pch";
