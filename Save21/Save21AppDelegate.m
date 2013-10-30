@@ -2,7 +2,7 @@
 //  Save21AppDelegate.m
 //  Save21
 //
-//  Created by Leon Chen on 10/29/2013.
+//  Created by Feiyang Chen on 10/29/2013.
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 

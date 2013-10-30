@@ -2,8 +2,8 @@
 //  OffersListRootController.m
 //  Save21
 //
-//  Created by Leon Chen on 2013-10-25.
-//  Copyright (c) 2013 Leon. All rights reserved.
+//  Created by Feiyang Chen on 2013-10-25.
+//  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
 #import "OffersListRootController.h"

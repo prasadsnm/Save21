@@ -1,8 +1,9 @@
 //
 //  ImagesBox.m
-//  Crave
+//  Save21
 //
-//  Created by feiyang chen on 13-10-17.
+//  Created by Feiyang Chen on 13-10-17.
+//  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
 #import "ImagesBox.h"

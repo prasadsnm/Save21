@@ -1,8 +1,9 @@
 //
 //  OffersList.h
-//  Crave
+//  Save21
 //
-//  Created by feiyang chen on 2013-10-19.
+//  Created by Feiyang Chen on 2013-10-19.
+//  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

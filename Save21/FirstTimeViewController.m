@@ -3,25 +3,22 @@
 //  Save21
 //
 //  Created by Feiyang Chen on 13-10-07.
+//  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
 #import "FirstTimeViewController.h"
 #import "keysAndUrls.h"
 
 @interface FirstTimeViewController ()
-@property (nonatomic,weak) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UIButton *getStartedButton;
 
 @end
 
 @implementation FirstTimeViewController
-@synthesize webView = _webView;
 @synthesize getStartedButton = _getStartedButton;
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.webView.scalesPageToFit = YES;
-    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:FIRST_TIME_LOGIN_PAGE_URL]]];
 
 }
 
@@ -29,8 +26,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.navigationItem.leftBarButtonItem=nil;
-    self.navigationItem.hidesBackButton=YES;
+    [self.navigationController setNavigationBarHidden:YES];
+    //self.navigationItem.leftBarButtonItem=nil;
+    //self.navigationItem.hidesBackButton=YES;
     
     UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
     NSString* boldFontName = @"Avenir-Black";

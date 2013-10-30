@@ -20,7 +20,7 @@
 @interface AOScrollerView : UIView<UIScrollViewDelegate,UrLImageButtonDelegate>
 {
     int pageNumer;//页码
-     int switchDirection;//方向
+    int switchDirection;//方向
     NSMutableArray *imageNameArr;//图片数组
     NSMutableArray *titleStrArr;//标题数组
     
