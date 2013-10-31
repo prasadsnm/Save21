@@ -9,6 +9,7 @@
 #import "PicturesViewController.h"
 #import "PhotoCell.h"
 #import "ImagesBox.h"
+#import "KGModal.h"
 
 @interface PicturesViewController () {
     ImagesBox *imageBox;
@@ -74,6 +75,42 @@
         alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"This device doesn't have camera. Can only upload via photo library." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [alert show];
     }
+    
+    [self showWelcomeMessage];
+}
+
+-(void)showWelcomeMessage {
+    //show welcome message using KGModal
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 280, 150)];
+    
+    CGRect welcomeLabelRect = contentView.bounds;
+    welcomeLabelRect.origin.y = 20;
+    welcomeLabelRect.size.height = 20;
+    UIFont *welcomeLabelFont = [UIFont boldSystemFontOfSize:17];
+    UILabel *welcomeLabel = [[UILabel alloc] initWithFrame:welcomeLabelRect];
+    welcomeLabel.text = @"Take Picture";
+    welcomeLabel.font = welcomeLabelFont;
+    welcomeLabel.textColor = [UIColor whiteColor];
+    welcomeLabel.textAlignment = NSTextAlignmentCenter;
+    welcomeLabel.backgroundColor = [UIColor clearColor];
+    welcomeLabel.shadowColor = [UIColor blackColor];
+    welcomeLabel.shadowOffset = CGSizeMake(0, 1);
+    [contentView addSubview:welcomeLabel];
+    
+    CGRect infoLabelRect = CGRectInset(contentView.bounds, 5, 5);
+    infoLabelRect.origin.y = CGRectGetMaxY(welcomeLabelRect)+5;
+    infoLabelRect.size.height -= CGRectGetMinY(infoLabelRect);
+    UILabel *infoLabel = [[UILabel alloc] initWithFrame:infoLabelRect];
+    infoLabel.text = @"Click the camera button on the bottom to start taking pictures of your receipts that you wish to upload.";
+    infoLabel.numberOfLines = 4;
+    infoLabel.textColor = [UIColor whiteColor];
+    infoLabel.textAlignment = NSTextAlignmentCenter;
+    infoLabel.backgroundColor = [UIColor clearColor];
+    infoLabel.shadowColor = [UIColor blackColor];
+    infoLabel.shadowOffset = CGSizeMake(0, 1);
+    [contentView addSubview:infoLabel];
+    
+    [[KGModal sharedInstance] showWithContentView:contentView andAnimated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

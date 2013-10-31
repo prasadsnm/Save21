@@ -30,7 +30,7 @@
         //图片总数
         int imageCount = [imageNameArr count];
         //标题总数
-        int titleCount =[titleStrArr count];
+        //int titleCount =[titleStrArr count];
         //初始化scrollView
         imageSV = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, heightValue)];
         //设置sview属性
@@ -40,7 +40,9 @@
         
         imageSV.showsVerticalScrollIndicator = NO;//不显示垂直滚动条
         imageSV.showsHorizontalScrollIndicator = NO;//不显示水平滚动条
+        imageSV.bounces = NO;//don't let user scroll to white space
         
+        imageSV.delegate = self;
         
         CGSize newSize = CGSizeMake(WIDTH * imageCount,  imageSV.frame.size.height);//设置scrollview的大小
         [imageSV setContentSize:newSize];
@@ -91,9 +93,8 @@
     //设置滚动到第几页
     [imageSV setContentOffset:CGPointMake(WIDTH*page, 0) animated:YES];
     
-    
-    
 }
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -102,6 +103,7 @@
     // Drawing code
 }
 */
+
 #pragma UBdelegate
 -(void)click:(int)vid{
     //调用委托实现方法

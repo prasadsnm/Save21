@@ -135,6 +135,11 @@
 		2243AE5218209CEF00619ECB /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE3918209CEF00619ECB /* Reachability.m */; };
 		2243AE5518209DDF00619ECB /* Leon_Austin_PrototypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE5418209DDF00619ECB /* Leon_Austin_PrototypeViewController.m */; };
 		227794ED1821B5F700102E79 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 227794EC1821B5F700102E79 /* Parse.framework */; };
+		227794F018223E6900102E79 /* KGModal.m in Sources */ = {isa = PBXBuildFile; fileRef = 227794EF18223E6900102E79 /* KGModal.m */; };
+		227794F31822471A00102E79 /* bg_cork.png in Resources */ = {isa = PBXBuildFile; fileRef = 227794F11822471A00102E79 /* bg_cork.png */; };
+		227794F41822471A00102E79 /* bg_cork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 227794F21822471A00102E79 /* bg_cork@2x.png */; };
+		227794F71822472200102E79 /* pushpin.png in Resources */ = {isa = PBXBuildFile; fileRef = 227794F51822472200102E79 /* pushpin.png */; };
+		227794F81822472200102E79 /* pushpin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 227794F61822472200102E79 /* pushpin@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -344,6 +349,12 @@
 		2243AE5318209DDF00619ECB /* Leon_Austin_PrototypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leon_Austin_PrototypeViewController.h; sourceTree = "<group>"; };
 		2243AE5418209DDF00619ECB /* Leon_Austin_PrototypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Leon_Austin_PrototypeViewController.m; sourceTree = "<group>"; };
 		227794EC1821B5F700102E79 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
+		227794EE18223E6900102E79 /* KGModal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGModal.h; sourceTree = "<group>"; };
+		227794EF18223E6900102E79 /* KGModal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGModal.m; sourceTree = "<group>"; };
+		227794F11822471A00102E79 /* bg_cork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_cork.png; sourceTree = "<group>"; };
+		227794F21822471A00102E79 /* bg_cork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_cork@2x.png"; sourceTree = "<group>"; };
+		227794F51822472200102E79 /* pushpin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pushpin.png; sourceTree = "<group>"; };
+		227794F61822472200102E79 /* pushpin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pushpin@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -494,7 +505,11 @@
 				2243AD8318209C4700619ECB /* arrow.png */,
 				2243AD8418209C4700619ECB /* arrow@2x.png */,
 				2243AD8518209C4700619ECB /* camera_icon 130px.png */,
+				227794F11822471A00102E79 /* bg_cork.png */,
+				227794F21822471A00102E79 /* bg_cork@2x.png */,
 				2243AD8618209C4700619ECB /* check.png */,
+				227794F51822472200102E79 /* pushpin.png */,
+				227794F61822472200102E79 /* pushpin@2x.png */,
 				2243AD8718209C4700619ECB /* check@2x.png */,
 				2243AD8818209C4700619ECB /* comment.png */,
 				2243AD8918209C4700619ECB /* comment@2x.png */,
@@ -728,6 +743,8 @@
 		2243AE5E18209FC100619ECB /* External Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				227794EE18223E6900102E79 /* KGModal.h */,
+				227794EF18223E6900102E79 /* KGModal.m */,
 				2243ADFF18209CEF00619ECB /* AOImageView */,
 				2243AE1618209CEF00619ECB /* GHSidebarNav */,
 				2243AD6918209BD500619ECB /* MBProgressHUD.h */,
@@ -917,12 +934,15 @@
 				2212064E1820F3C400860FF1 /* Icon-40.png in Resources */,
 				2212065C1820F3C400860FF1 /* iTunesArtwork.png in Resources */,
 				221206531820F3C400860FF1 /* Icon-72@2x.png in Resources */,
+				227794F81822472200102E79 /* pushpin@2x.png in Resources */,
 				2243ADB918209C4700619ECB /* settings.png in Resources */,
 				2243ADA118209C4700619ECB /* arrow.png in Resources */,
 				2243AD1C1820992A00619ECB /* InfoPlist.strings in Resources */,
 				2243ADA218209C4700619ECB /* arrow@2x.png in Resources */,
 				2243AE4818209CEF00619ECB /* user.png in Resources */,
+				227794F31822471A00102E79 /* bg_cork.png in Resources */,
 				2243ADB118209C4700619ECB /* mail.png in Resources */,
+				227794F71822472200102E79 /* pushpin.png in Resources */,
 				221206541820F3C400860FF1 /* Icon-76.png in Resources */,
 				221206571820F3C400860FF1 /* Icon-Small-50@2x.png in Resources */,
 				2243AE4718209CEF00619ECB /* searchTextBG.png in Resources */,
@@ -934,6 +954,7 @@
 				221206521820F3C400860FF1 /* Icon-72.png in Resources */,
 				2243ADB818209C4700619ECB /* search@2x.png in Resources */,
 				2212065F1820F6FB00860FF1 /* howTo.png in Resources */,
+				227794F41822471A00102E79 /* bg_cork@2x.png in Resources */,
 				2243ADA818209C4700619ECB /* compose.png in Resources */,
 				2243ADA018209C4700619ECB /* account@2x.png in Resources */,
 				2243ADA318209C4700619ECB /* camera_icon 130px.png in Resources */,
@@ -1025,6 +1046,7 @@
 				2243ADF518209CE200619ECB /* SettingsCell1.m in Sources */,
 				2243ADFB18209CE200619ECB /* singleOffer.m in Sources */,
 				2243ADED18209CE200619ECB /* OffersArrayBuilder.m in Sources */,
+				227794F018223E6900102E79 /* KGModal.m in Sources */,
 				2243ADEF18209CE200619ECB /* OffersListRootController.m in Sources */,
 				2243AE3B18209CEF00619ECB /* AOScrollerView.m in Sources */,
 				2243ADFE18209CE200619ECB /* Utils.m in Sources */,
