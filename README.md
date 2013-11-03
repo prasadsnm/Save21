@@ -13,6 +13,7 @@ Save21
   substantial amount of credit has been accumulated.
 
 
+
   This Demo
   ------------------
   This demo is fully functional feature-wise with mock offers. It freely lets any user to sign up for 
@@ -20,6 +21,7 @@ Save21
   user information is saved on a web back-end server. The list of offers including the top banners is 
   also fetched from my web server. Any uploaded photos from the user can be viewed or extracted from 
   my web server for manual verification. 
+
 
   Technical Details
   -------------
@@ -29,10 +31,12 @@ Save21
   managing secure user info.
   The web API is written in a RESTful manner using PHP and HTTP methods (e.g., GET, PUT, POST, or DELETE).
 
+
   Testing Environment
   ------------
   This demo is aimed at any iPhone with retina display, running on iOS 7+
   The project can be opened and compiled using xCode 5.
+
 
   Licensing
   ---------
