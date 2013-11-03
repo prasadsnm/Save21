@@ -3,22 +3,23 @@ Save21
  What is it?
   -----------
 
-  Save21 is a simple demonstration of an electronic coupon/rebate app running natively on the iOS 7.  
-  The idea of electronic coupon originates from existing apps such as Groupon and Checkout51.
+  Save21 is a simple demonstration of an electronic coupon/rebate app running natively on the iOS 7.
+  The idea of electronic coupon originates from existing apps such as Groupon and Checkout51. 
   It relieves the retailer from having to apply the discount at the cash register and enables the 
-  product producers to quickly and easily deliver rebates to each customer through the app.
-  The user is able to view all participants’ latest offers, go out the buy the product on rebate, 
-  and send a photo of the proof of purchase through the app to the company running the app. 
-  The company will verify the validity of the proof, credit the user of the amount claimed, and sends 
-  the user a cheque once a substantial amount of credit has been accumulated.
+  product producers to quickly and easily deliver rebates to each customer through the app. The user 
+  is able to view all participants’ latest offers, go out and buy the products on rebate, and send a 
+  photo of the proof of purchase through Save21 to the company running the app. The company will verify 
+  the validity of the proof, credit the user of the amount claimed, and sends the user a cheque once a 
+  substantial amount of credit has been accumulated.
+
 
   This Demo
   ------------------
   This demo is fully functional feature-wise with mock offers. It freely lets any user to sign up for 
-  an account, login to an existing account, and also reclaim a forgotten password through email.
-  Their user information is saved on a web back-end server. The list of offers including the top banners 
-  is also fetched from my web server. Any uploaded photos from the user can be viewed or extracted
-  from my web server for manual verification. 
+  an account, login to an existing account, and also reclaim a forgotten password through email. Their 
+  user information is saved on a web back-end server. The list of offers including the top banners is 
+  also fetched from my web server. Any uploaded photos from the user can be viewed or extracted from 
+  my web server for manual verification. 
 
   Technical Details
   -------------
