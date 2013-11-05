@@ -24,6 +24,10 @@ Testing Environment
 This demo is aimed at any iPhone with retina display, running on iOS 7+ 
 The project can be opened and compiled using xCode 5.
 
+Known bugs
+------------
+Although the program is capable of detecting an active internet connection and notify the user, it is not real time and may not work well if the user has an unstable internet connection.
+
 
 Licensing
 ---------
