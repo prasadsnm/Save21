@@ -5,7 +5,7 @@ What is it?
 
 Save21 is a simple demonstration of an electronic coupon/rebate app running natively on iOS 7.
 
-The idea of electronic coupon originates from existing apps such as Groupon and Checkout51. It relieves the retailer from having to apply the discount at the cash register and lets the product maker to effectively deliver rebates to each customer through the app. The user is able to view and select various offers provided by the product makers, go out and buy the products on rebate from retailers. After purchases are being completed, the user is required to take pictures of the receipts, and send these pictures as the proof of purchases through Save21 to the company running the app. The company verifies the validity of the proofs, credits users of the amounts claimed, and sends out cheques to users with a fixed substantial amount in their account.
+The idea of electronic coupon originates from existing apps such as Groupon and Checkout51. It relieves the retailer from having to apply the discount at the cash register and lets the product maker to effectively deliver rebates to each customer through the app. The user is able to view and select various offers provided by the product makers, go out and buy the products on rebate from retailers. After purchases are being completed, the user is required to take pictures of the receipts, and send these pictures as the proof of purchases through Save21 to the company running the app. The company verifies the validity of the proofs, credits users of the amounts claimed, and sends out cheques to users who accumulated a substantial amount in their account.
 
 
 
