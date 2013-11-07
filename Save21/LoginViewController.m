@@ -16,11 +16,11 @@
 
 @property (nonatomic, weak) IBOutlet UIButton *loginButton;
 
-@property (nonatomic, weak) IBOutlet UIButton * forgotButton;
+@property (nonatomic, weak) IBOutlet UIButton *forgotButton;
 
-@property (nonatomic, weak) IBOutlet UILabel * titleLabel;
+@property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 
-@property (nonatomic, weak) IBOutlet UILabel * subTitleLabel;
+@property (nonatomic, weak) IBOutlet UILabel *subTitleLabel;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonConstraint;
 

@@ -128,6 +128,9 @@
 
 - (void)didReceiveOffers:(NSArray *)offers
 {
+    [self removeNoInternetWarning];
+    connected = YES;
+    
     offersBox.offersArray = offers;
     
     arrayOfBannersImageURLs = nil;
@@ -171,6 +174,9 @@
 }
 
 -(void)failedToReceiveOffers {
+    [self showNoInternetWarning];
+    connected = NO;
+    
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't get the lastest offers from server, please check internet connectivity and try again later." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
     [alert show];
     

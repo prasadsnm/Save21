@@ -29,8 +29,6 @@
     
     [self.navigationController setNavigationBarHidden:YES];
     
-    //[PFUser logOut];
-    //PFUser *currentUser = [PFUser currentUser]; // this will now be nil
     self.imageLogo.clipsToBounds = YES;
     self.imageLogo.layer.borderWidth = 4.0f;
     self.imageLogo.layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.5f].CGColor;
@@ -38,7 +36,7 @@
     
     [self.activityIndicator startAnimating];
     
-    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(aTime) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(aTime) userInfo:nil repeats:NO];
     
 }
 
