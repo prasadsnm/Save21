@@ -134,6 +134,7 @@
 		2243AE5118209CEF00619ECB /* MKNetworkOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE3618209CEF00619ECB /* MKNetworkOperation.m */; };
 		2243AE5218209CEF00619ECB /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE3918209CEF00619ECB /* Reachability.m */; };
 		2243AE5518209DDF00619ECB /* Leon_Austin_PrototypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243AE5418209DDF00619ECB /* Leon_Austin_PrototypeViewController.m */; };
+		226D76C3182B7DA100E2D6E7 /* Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = 226D76C2182B7DA100E2D6E7 /* Delete.png */; };
 		227794ED1821B5F700102E79 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 227794EC1821B5F700102E79 /* Parse.framework */; };
 		227794F018223E6900102E79 /* KGModal.m in Sources */ = {isa = PBXBuildFile; fileRef = 227794EF18223E6900102E79 /* KGModal.m */; };
 		227794F31822471A00102E79 /* bg_cork.png in Resources */ = {isa = PBXBuildFile; fileRef = 227794F11822471A00102E79 /* bg_cork.png */; };
@@ -348,6 +349,7 @@
 		2243AE3918209CEF00619ECB /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2243AE5318209DDF00619ECB /* Leon_Austin_PrototypeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leon_Austin_PrototypeViewController.h; sourceTree = "<group>"; };
 		2243AE5418209DDF00619ECB /* Leon_Austin_PrototypeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Leon_Austin_PrototypeViewController.m; sourceTree = "<group>"; };
+		226D76C2182B7DA100E2D6E7 /* Delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Delete.png; sourceTree = "<group>"; };
 		227794EC1821B5F700102E79 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		227794EE18223E6900102E79 /* KGModal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGModal.h; sourceTree = "<group>"; };
 		227794EF18223E6900102E79 /* KGModal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGModal.m; sourceTree = "<group>"; };
@@ -497,6 +499,7 @@
 				221206481820F3C400860FF1 /* Icon-Small.png */,
 				221206491820F3C400860FF1 /* Icon-Small@2x.png */,
 				2212064A1820F3C400860FF1 /* Icon.png */,
+				226D76C2182B7DA100E2D6E7 /* Delete.png */,
 				2212064B1820F3C400860FF1 /* Icon@2x.png */,
 				2212064C1820F3C400860FF1 /* iTunesArtwork.png */,
 				2212064D1820F3C400860FF1 /* iTunesArtwork@2x.png */,
@@ -968,6 +971,7 @@
 				2243ADB618209C4700619ECB /* Placeholder@2x.png in Resources */,
 				2243ADAA18209C4700619ECB /* envelope.png in Resources */,
 				2243ADAC18209C4700619ECB /* heart.png in Resources */,
+				226D76C3182B7DA100E2D6E7 /* Delete.png in Resources */,
 				2243ADAD18209C4700619ECB /* heart@2x.png in Resources */,
 				2243AE4518209CEF00619ECB /* searchBarIcon.png in Resources */,
 				221206551820F3C400860FF1 /* Icon-76@2x.png in Resources */,

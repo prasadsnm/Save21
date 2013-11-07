@@ -9,4 +9,6 @@
 
 @interface PhotoCell : UICollectionViewCell
 @property (nonatomic,strong) UIImage *image;
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
+
 @end

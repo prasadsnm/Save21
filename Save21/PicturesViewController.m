@@ -133,6 +133,8 @@
     
     cell.backgroundColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
     
+    [cell.deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    
     return cell;
 }
 
@@ -143,7 +145,6 @@
 -(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     return 1;
 }
-
 
 - (IBAction)cancelButtonPressed {
     //clear the imagebox
@@ -179,6 +180,16 @@
             //code
         }];
     }
+}
+
+//the action for the delete button in each PhotoCell
+- (void)deleteButtonPressed:(UIButton *)sender
+{
+    NSIndexPath *indexPath = [self.collectionView indexPathForCell:(PhotoCell *)sender.superview.superview];
+    
+    [imageBox.imageArray removeObjectAtIndex:indexPath.row];
+    
+    [self.collectionView deleteItemsAtIndexPaths:[NSArray arrayWithObject:indexPath]];
 }
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -236,5 +247,4 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 @end
