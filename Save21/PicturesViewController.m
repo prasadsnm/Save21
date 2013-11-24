@@ -200,18 +200,18 @@
         float actualHeight = image.size.height;
         float actualWidth = image.size.width;
         float imgRatio = actualWidth/actualHeight;
-        float maxRatio = 320.0/480.0;
+        float maxRatio = 640.0/960.0;
         
         if(imgRatio!=maxRatio){
             if(imgRatio < maxRatio){
-                imgRatio = 480.0 / actualHeight;
+                imgRatio = 960.0 / actualHeight;
                 actualWidth = imgRatio * actualWidth;
-                actualHeight = 480.0;
+                actualHeight = 960.0;
             }
             else{
-                imgRatio = 320.0 / actualWidth;
+                imgRatio = 640.0 / actualWidth;
                 actualHeight = imgRatio * actualHeight;
-                actualWidth = 320.0;
+                actualWidth = 640.0;
             }
         }
         CGRect rect = CGRectMake(0.0, 0.0, actualWidth, actualHeight);

@@ -228,10 +228,15 @@
     indexOfSelectedCell = indexPath.row;
     
     singleOffer *selectedOffer = offersBox.offersArray[indexOfSelectedCell];
-    offerURLStringForSegue = selectedOffer.offerurl;
-    NSLog(@"%@",offerURLStringForSegue);
     
-    [self performSegueWithIdentifier:@"show Offer" sender: self];
+    if (selectedOffer.offerurl == [NSNull null]) {
+        NSLog(@"Got a null for Offer pageURL ");
+    } else {
+        offerURLStringForSegue = selectedOffer.offerurl;
+        NSLog(@"%@",offerURLStringForSegue);
+    
+        [self performSegueWithIdentifier:@"show Offer" sender: self];
+    }
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -276,10 +281,14 @@
 	cell.updateLabel.text = currentOffer.description;
     cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
     
-    if (currentOffer.num_left == -1)
+    if (currentOffer.total_offered == -1)
         cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
-    else
-        cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",currentOffer.num_left];
+    else {
+        if ( (currentOffer.total_offered - currentOffer.num_of_valid_claims) < 1 )
+            cell.dateLabel.text = @"SOLD OUT";
+        else
+            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims)];
+    }
     
 	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
     

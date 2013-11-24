@@ -11,18 +11,22 @@
 
 #import "keysAndUrls.h"
 
+
 @interface AccountInfoViewController () {
     MBProgressHUD *HUD;
 }
 
 @property (nonatomic, strong) NSString* boldFontName;
-
 @property (nonatomic, strong) UIColor* onColor;
-
 @property (nonatomic, strong) UIColor* dividerColor;
-
 @property (weak, nonatomic) IBOutlet UIButton *requestChequeButton;
 
+@property int num_of_pending_claims;
+@property float account_balance;
+@property float total_savings;
+@property float min_amount_for_redeem;
+
+@property BOOL redeem_cheque_enabled;
 @end
 
 @implementation AccountInfoViewController
@@ -57,8 +61,6 @@ enum AboutMe {
     self.navigationItem.hidesBackButton = YES;
     
     HUD = [[MBProgressHUD alloc] initWithView:self.view];
-    HUD.labelText = @"Please wait";
-    HUD.detailsLabelText = @"Refreshing account info...";
     HUD.mode = MBProgressHUDModeAnnularDeterminate;
     [self.view addSubview:HUD];
     
@@ -87,35 +89,86 @@ enum AboutMe {
     [self.requestChequeButton setTitle:@"REQUEST CHEQUE" forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
+    
+    self.flUploadEngine = [[fileUploadEngine alloc]initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
+}
+
+-(void)refreshAccountInfo {
+    HUD.labelText = @"Please wait";
+    HUD.detailsLabelText = @"Refreshing account info...";
+    [HUD show:YES];
+    
+    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_account_info",
+                                       [PFUser currentUser].email, @"user_email", nil];
+    self.flOperation = [self.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
+        NSLog(@"Requesting user account info success!");
+        //handle a successful 200 response
+        NSDictionary *responseDict = [operation responseJSON];
+        weakSelf.num_of_pending_claims = [[responseDict objectForKey:@"num_of_pending_claims"] intValue];
+        weakSelf.account_balance = [[responseDict objectForKey:@"account_balance"] floatValue];
+        weakSelf.total_savings = [[responseDict objectForKey:@"total_savings"] floatValue];
+        weakSelf.min_amount_for_redeem = [[responseDict objectForKey:@"min_amount_redeem_cheque"] floatValue];
+        
+        if (weakSelf.account_balance >= weakSelf.min_amount_for_redeem)
+            weakSelf.redeem_cheque_enabled = YES;
+        else
+            weakSelf.redeem_cheque_enabled = NO;
+        
+        [weakSelf.tableView reloadData];
+        [HUD hide:YES];
+    }
+    errorHandler:^(MKNetworkOperation *completedOperation, NSError *error)
+     {
+         NSLog(@"%@", error);
+         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to refresh user account info try again." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+         [alert show];
+         [HUD hide:YES];
+         
+     }];
+    [self.flUploadEngine enqueueOperation:self.flOperation];
+}
+
+-(void)request_cheque {
+    HUD.labelText = @"Please wait";
+    HUD.detailsLabelText = @"Sending cheque request...";
+    [HUD show:YES];
+    
+    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_cheque",
+                                       [PFUser currentUser].email, @"user_email", nil];
+    self.flOperation = [self.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
+        NSLog(@"Requesting cheque success!");
+        //handle a successful 200 response
+        [HUD hide:YES];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"You have successfully request the cheque." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+        
+    }
+    errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+         NSLog(@"%@", error);
+         //user already requested cheque
+         if (error.code == 409) {
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"You have already requested a cheque." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+             [alert show];
+         } else {
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to request cheque, please try again." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+             [alert show];
+         }
+         [HUD hide:YES];
+         
+     }];
+    [self.flUploadEngine enqueueOperation:self.flOperation];
 }
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    PFUser *thisUser = [PFUser currentUser];
-    
-    [HUD show:YES];
-        
-    [thisUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        [NSThread sleepForTimeInterval:1.0f]; //simulate loading time
-        
-        if (object) {
-            NSLog(@"User profile info refresh complete.");
-            [HUD hide:YES];
-        } else {
-            if (error) {
-                NSLog(@"PROBLEM: %@", [error userInfo][@"error"]);
-                if ([error code] == kPFErrorConnectionFailed) {
-                    UIAlertView *alert;
-                    alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"It appears you are not online. Please connect to internet and revisit this page to refresh." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil, nil];
-                    [alert show];
-                } else if (error) {
-                    NSLog(@"Error: %@", [error userInfo][@"error"]);
-                }
-                [HUD hide:YES];
-            }
-        }
-    }];
+    [self refreshAccountInfo];
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -123,7 +176,16 @@ enum AboutMe {
 }
 
 - (IBAction)requestChequeButtonPressed:(UIButton *)sender {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString: REQUEST_CHEQUE_PAGE_URL]];
+    if (!self.redeem_cheque_enabled) {
+        //make sure camera is available
+        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
+            UIAlertView *alert;
+            alert = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"This account doesn't have enough balance to request a cheque yet." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            [alert show];
+        }
+    } else {
+        [self request_cheque];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -175,13 +237,13 @@ enum AboutMe {
         case SavingsSection: {
             switch (row) {
                 case ReceiptsPending:
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",[[PFUser currentUser] objectForKey:@"numberOfReceiptsInProcess"]];
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d",self.num_of_pending_claims];
                     break;
                 case AccountBalance:
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",[[[PFUser currentUser] objectForKey:@"accountBalance"] doubleValue]];
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.account_balance];
                     break;
                 case TotalSavings:
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",[[[PFUser currentUser] objectForKey:@"totalSaved"] doubleValue]];
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.total_savings];
                     break;
                     
                 default:

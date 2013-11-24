@@ -154,10 +154,15 @@
     cell.nameLabel.text = currentOffer.name;
 	cell.updateLabel.text = currentOffer.description;
     cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
-    if (currentOffer.num_left == -1)
+    
+    if (currentOffer.total_offered == -1)
         cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
-    else
-        cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",currentOffer.num_left];
+    else {
+        if ( (currentOffer.total_offered - currentOffer.num_of_valid_claims) < 1 )
+            cell.dateLabel.text = @"SOLD OUT";
+        else
+            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims)];
+    }
     
 	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
     
@@ -228,7 +233,7 @@
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        [PFUser currentUser].email, @"user_email",
                                        [self.currentReceiptID stringValue], @"receiptID",
-                                       [NSString stringWithFormat: @"%d", anotherBox.imageArray.count],@"num_of_photos",
+                                       [NSString stringWithFormat: @"%lu", (unsigned long)anotherBox.imageArray.count],@"num_of_photos",
                                        nil];
     self.flOperation = [self.flUploadEngine postDataToServer:postParams path:@"/indexAPI.php"];
     
@@ -236,7 +241,7 @@
 
     NSInteger counter = 1;
     for (NSData *image in anotherBox.imageArray) {
-        NSString *fileName = [NSString stringWithFormat:@"Receipt-%d.jpeg",counter];
+        NSString *fileName = [NSString stringWithFormat:@"Receipt-%ld.jpeg",(long)counter];
         
         [self.flOperation addData:image forKey:@"file[]" mimeType:@"image/jpeg" fileName:fileName];
         counter++;

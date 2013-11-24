@@ -8,7 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import "fileUploadEngine.h"
 
 @interface AccountInfoViewController : UITableViewController
+
+@property (nonatomic,strong) fileUploadEngine *flUploadEngine;
+@property (nonatomic,strong) MKNetworkOperation *flOperation;
+
 
 @end
