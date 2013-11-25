@@ -11,21 +11,29 @@
 #import "ImagesBox.h"
 #import "KGModal.h"
 
-@interface PicturesViewController () {
+@interface PicturesViewController () <UIActionSheetDelegate> {
     ImagesBox *imageBox;
 }
 
 @property (strong,nonatomic) UIImagePickerController *imagePicker;
-
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *uploadButton;
+@property (strong, nonatomic) UIActionSheet *actionSheet;
+@property (weak, nonatomic) IBOutlet UIButton *cameraButton;
+@property BOOL helpDialogShown;
+
+#define TAKE_PHOTO @"Take Photo"
+#define PICK_PHOTO @"Pick from Library"
 
 @end
 
 @implementation PicturesViewController
 @synthesize imagePicker = _imagePicker;
 @synthesize collectionView = _collectionView;
+@synthesize cancelButton = _cancelButton;
+@synthesize uploadButton = _uploadButton;
+@synthesize actionSheet = _actionSheet;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -69,14 +77,19 @@
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
     
+    /*
     //make sure camera is available
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
         UIAlertView *alert;
         alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"This device doesn't have camera. Can only upload via photo library." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [alert show];
     }
+    */
     
-    [self showWelcomeMessage];
+    self.actionSheet = [[UIActionSheet alloc] initWithTitle:@"Get Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:TAKE_PHOTO,PICK_PHOTO, nil];
+    
+    if (!self.helpDialogShown)
+        [self showWelcomeMessage];
 }
 
 -(void)showWelcomeMessage {
@@ -111,6 +124,8 @@
     [contentView addSubview:infoLabel];
     
     [[KGModal sharedInstance] showWithContentView:contentView andAnimated:YES];
+    
+    self.helpDialogShown = YES;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -157,11 +172,27 @@
     if (self.imagePicker == nil) {
         self.imagePicker = [[UIImagePickerController alloc] init];
     }
-    // If our device has a camera, we want to take a picture, otherwise, we
-    // just pick from photo library
-    if ([UIImagePickerController
-         isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+    // If our device has a camera, give the user the options to take a picture or pick from photo library
+    //otherwise, just go straight to picking from photo library
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        //show the action sheet
+        [self.actionSheet showInView:self.view];
+
+    } else { //go straight to picking from photo library
+        [self.imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         
+        [self.imagePicker setDelegate:self];
+        self.imagePicker.allowsEditing = NO;
+        [self presentViewController:self.imagePicker animated:YES completion:^{
+            //code
+        }];
+    }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *choice = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([choice isEqualToString:TAKE_PHOTO]) {
         [self.imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
         [self.imagePicker setDelegate:self];
         self.imagePicker.cameraFlashMode =UIImagePickerControllerCameraFlashModeOff;
@@ -170,8 +201,7 @@
         [self presentViewController:self.imagePicker animated:YES completion:^{
             //code
         }];
-        
-    } else {
+    } else if ([choice isEqualToString:PICK_PHOTO]) {
         [self.imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         
         [self.imagePicker setDelegate:self];

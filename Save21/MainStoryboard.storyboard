@@ -659,6 +659,7 @@
                     <navigationItem key="navigationItem" id="yi3-wv-SUs"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="cameraButton" destination="hFi-UF-uVE" id="nCX-TB-cLR"/>
                         <outlet property="cancelButton" destination="uK3-Ov-FbS" id="4Nc-0o-7PC"/>
                         <outlet property="collectionView" destination="a4T-hg-ft1" id="Qvd-cD-fx0"/>
                         <outlet property="titleLabel" destination="stp-VS-OiJ" id="WmF-B9-lGj"/>
@@ -1759,7 +1760,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="t3N-5f-lZs"/>
+        <segue reference="GRY-nP-8bp"/>
         <segue reference="dI8-jT-r3y"/>
-        <segue reference="Oaq-8A-zQ0"/>
     </inferredMetricsTieBreakers>
 </document>
