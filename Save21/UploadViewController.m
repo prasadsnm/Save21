@@ -166,30 +166,30 @@
     
 	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
     
+    //draw check mark on selected cell
+    if ( [self.DictionaryOfSelectedOfferIDs objectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid] )
+    {
+        cell.accessoryType=UITableViewCellAccessoryCheckmark;
+    }
+    else
+    {
+        cell.accessoryType=UITableViewCellAccessoryNone;
+    }
+    
 	return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    if (selectedCell.accessoryType == UITableViewCellAccessoryNone)
+    if ([self.DictionaryOfSelectedOfferIDs objectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid] == nil)
     {
-        //UIImageView *checkBox = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkbox-pressed.png"]] autorelease];
-        //checkBox.frame = CGRectMake(0, 0, 20, 20);
-        //selectedCell.accessoryView = checkBox;
-        selectedCell.accessoryType=UITableViewCellAccessoryCheckmark;
         [self.DictionaryOfSelectedOfferIDs setObject:[NSNull null]  forKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid];
         
         NSLog(@"Row %ld checked",(long)indexPath.row);
     }
-    else  if (selectedCell.accessoryType==UITableViewCellAccessoryCheckmark)
+    else
     {
-        //UIImageView *checkBox = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkbox.png"]] autorelease];
-        //checkBox.frame = CGRectMake(0, 0, 20, 20);
-        //selectedCell.accessoryView = checkBox;
-        selectedCell.accessoryType=UITableViewCellAccessoryNone;
         [self.DictionaryOfSelectedOfferIDs removeObjectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid];
         
         NSLog(@"Row %ld unchecked",(long)indexPath.row);
