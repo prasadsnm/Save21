@@ -177,12 +177,10 @@ enum AboutMe {
 
 - (IBAction)requestChequeButtonPressed:(UIButton *)sender {
     if (!self.redeem_cheque_enabled) {
-        //make sure camera is available
-        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
-            UIAlertView *alert;
-            alert = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"This account doesn't have enough balance to request a cheque yet." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-            [alert show];
-        }
+        UIAlertView *alert;
+        alert = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"This account doesn't have enough balance to request a cheque yet." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];
+
     } else {
         [self request_cheque];
     }
