@@ -12,7 +12,7 @@ The idea of electronic coupon originates from existing apps such as Groupon and 
 This Demo
 ------------------
 This demo is fully functional feature-wise with mock offers. It freely lets any user to sign up for an account, login to an existing account, and also reclaim the forgotten password through email. Their user information is saved on a Cloud based server. The list of offers including the top banners are fetched from my own web server. Any uploaded photos from the user can be viewed or extracted from my web server for manual verification. 
-I have also developed a server-side management software running on MAC OS that lets the administrator handle all server information, and uses OCR technology to verify user uploaded receipts.
+I have also developed a server-side management software running on OS X that lets the administrator handle all server information, and uses OCR technology to verify user uploaded receipts.
 The management-software will not be posted here and will be demostrated in person.
 
 Technical Details
