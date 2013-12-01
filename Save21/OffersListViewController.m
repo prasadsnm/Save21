@@ -8,7 +8,6 @@
 
 #import "OffersListViewController.h"
 #import "OfferViewController.h"
-
 #import "singleOffer.h"
 #import "FetchingManager.h"
 #import "keysAndUrls.h"
@@ -16,6 +15,20 @@
 #import "MHLazyTableImages.h"
 #import "MBProgressHUD.h"
 #import "OfferTableCell.h"
+#import "Reachability.h"
+
+static Reachability *_reachability = nil;
+BOOL _reachabilityOn;
+
+static inline Reachability* defaultReachability () {
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _reachability = [Reachability reachabilityForInternetConnection];
+    });
+    
+    return _reachability;
+}
 
 #define AppIconHeight    75.0f
 
@@ -23,7 +36,7 @@
     FetchingManager *_manager;
     OffersList *offersBox;
     
-    int indexOfSelectedCell;
+    long indexOfSelectedCell;
     
     MHLazyTableImages *_lazyImages;
     
@@ -31,9 +44,11 @@
     
     NSMutableArray *arrayOfBannersImageURLs;
     NSMutableArray *arrayOfBannersTitles;
-    NSMutableArray *arrayOfBannersURLs;
+    NSMutableArray *arrayOfBannersOfferIDs;
+    NSMutableArray *arrayOfBannersOfferURLs;
     
-    NSString *offerURLStringForSegue;
+    NSString *offerIDForSegue;
+    NSString *offerURLForSegue;
     
     BOOL connected;
 }
@@ -42,7 +57,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *warningLabel;
 @property (strong, nonatomic) IBOutlet AOScrollerView *scrollPictureView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelHeight;
-
 
 @end
 
@@ -90,65 +104,69 @@
     HUD.mode = MBProgressHUDModeIndeterminate;
     [self.view addSubview:HUD];
     
-    [HUD show:YES];
-    
     self.offersListTable.backgroundColor = [UIColor whiteColor];
     self.offersListTable.separatorColor = [UIColor colorWithWhite:0.9 alpha:0.6];
     
     //Initialize the Singleton OffersList variable
     offersBox = [OffersList offersList];
     
-    _manager = [[FetchingManager alloc] init];
-    _manager.flUploadEngine = [[fileUploadEngine alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
-    _manager.delegate = self;
-    
     [self.offersListTable setDataSource:self];
     [self.offersListTable setDelegate:self];
     
     _lazyImages.tableView = self.offersListTable;
+    
+    
+    _manager = [[FetchingManager alloc] init];
+    _manager.delegate = self;
 }
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    // Add Observer
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
-    
+    [self startInternetReachability];
     [self startFetchingOffers];
 }
 
+
+//slide out the slider bar
 - (void)revealToggle:(id)sender {
     [self.revealController toggleSidebar:!self.revealController.sidebarShowing duration:kGHRevealSidebarDefaultAnimationDuration];
 }
 
+//fetch offers list from either cache or internet
 - (void)startFetchingOffers
 {
+    [HUD show:YES];
+    //fetch from offers
     [_manager fetchOffers];
 }
 
-- (void)didReceiveOffers:(NSArray *)offers
+- (void)didReceiveOffers:(NSArray *)offers withBatchID:(NSString *)batchID
 {
+    
     [self removeNoInternetWarning];
     connected = YES;
+    
+    NSLog(@"Got offer batch hash: %@",batchID);
     
     offersBox.offersArray = offers;
     
     arrayOfBannersImageURLs = nil;
     arrayOfBannersTitles = nil;
-    arrayOfBannersURLs = nil;
+    arrayOfBannersOfferIDs = nil;
+    arrayOfBannersOfferURLs = nil;
     
     arrayOfBannersImageURLs = [[NSMutableArray alloc] init];
     arrayOfBannersTitles = [[NSMutableArray alloc] init];
-    arrayOfBannersURLs = [[NSMutableArray alloc] init];
+    arrayOfBannersOfferIDs = [[NSMutableArray alloc] init];
+    arrayOfBannersOfferURLs = [[NSMutableArray alloc] init];
     
     for (singleOffer *offer in offersBox.offersArray) {
-        
         if ([offer.properties isEqualToString:@"banner"]) {
             [arrayOfBannersImageURLs addObject:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]];
             [arrayOfBannersTitles addObject:offer.name];
-            [arrayOfBannersURLs addObject:offer.offerurl];
+            [arrayOfBannersOfferIDs addObject:offer.offerid];
+            [arrayOfBannersOfferURLs addObject:offer.offerurl];
         }
-        
         //NSLog(@"%@",[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]);
     }
     
@@ -229,14 +247,13 @@
     
     singleOffer *selectedOffer = offersBox.offersArray[indexOfSelectedCell];
     
-    if (selectedOffer.offerurl == [NSNull null]) {
-        NSLog(@"Got a null for Offer pageURL ");
-    } else {
-        offerURLStringForSegue = selectedOffer.offerurl;
-        NSLog(@"%@",offerURLStringForSegue);
+    offerIDForSegue = selectedOffer.offerid;
+    offerURLForSegue = selectedOffer.offerurl;
     
-        [self performSegueWithIdentifier:@"show Offer" sender: self];
-    }
+    NSLog(@"Offer ID %@ to segue",offerIDForSegue);
+    NSLog(@"Offer URL %@ to segue",offerURLForSegue);
+    
+    [self performSegueWithIdentifier:@"show Offer" sender: self];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -279,15 +296,15 @@
     
     cell.nameLabel.text = currentOffer.name;
 	cell.updateLabel.text = currentOffer.description;
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",[currentOffer.rebate_amount floatValue]];
     
-    if (currentOffer.total_offered == -1)
+    if ([currentOffer.total_offered intValue] == -1)
         cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
     else {
-        if ( (currentOffer.total_offered - currentOffer.num_of_valid_claims) < 1 )
+        if ( ( [currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] ) < 1 )
             cell.dateLabel.text = @"SOLD OUT";
         else
-            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims)];
+            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] )];
     }
     
 	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
@@ -295,6 +312,9 @@
 	return cell;
 }
 
+-(void)refreshTableView {
+    [self.offersListTable reloadData];
+}
 
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     if ([identifier isEqualToString:@"Go to camera view"]) {
@@ -311,14 +331,16 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"show Offer"]) {        
-        [segue.destinationViewController setUrlString:offerURLStringForSegue];
+        [segue.destinationViewController setOfferPageID:offerIDForSegue];
+        [segue.destinationViewController setOfferPageURL:offerURLForSegue];
     }
 }
 
 #pragma AOScrollViewDelegate
 -(void)buttonClick:(int)vid{
-    NSLog(@"%@",arrayOfBannersURLs[vid]);
-    offerURLStringForSegue = arrayOfBannersURLs[vid];
+    //NSLog(@"%@",arrayOfBannersOfferIDs[vid]);
+    offerIDForSegue = arrayOfBannersOfferIDs[vid];
+    offerURLForSegue = arrayOfBannersOfferURLs[vid];
     
     [self performSegueWithIdentifier:@"show Offer" sender:self];
 }
@@ -361,19 +383,48 @@
 }
 
 #pragma mark Notification Handling
-- (void)reachabilityDidChange:(NSNotification *)notification {
-    Reachability *reachability = (Reachability *)[notification object];
-    
-    if ([reachability isReachable] || [reachability isReachableViaWWAN] || [reachability isReachableViaWiFi]) {
-        NSLog(@"Reachable");
-        [self removeNoInternetWarning];
-        connected = YES;
-        [HUD show:YES];
-        [self startFetchingOffers];
-    } else {
-        NSLog(@"Unreachable");
-        [self showNoInternetWarning];
-        connected = NO;
+- (void)checkNetworkStatus {
+    // called after network status changes
+    NetworkStatus internetStatus = [defaultReachability() currentReachabilityStatus];
+    switch (internetStatus) {
+            
+        case NotReachable: {
+            NSLog(@"Unreachable");
+            [self performSelector:@selector(showNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
+            connected = NO;
+            break;
+        }
+            
+        case ReachableViaWiFi:
+        case ReachableViaWWAN: {
+            NSLog(@"Reachable");
+            [self performSelector:@selector(removeNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
+            connected = YES;
+            [self startFetchingOffers];
+            break;
+        }
+            
+        default:
+            break;
     }
+}
+
+- (void)startInternetReachability {
+    
+    if (!_reachabilityOn) {
+        _reachabilityOn = TRUE;
+        [defaultReachability() startNotifier];
+    }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkNetworkStatus) name:kReachabilityChangedNotification object:nil];
+    
+    [self checkNetworkStatus];
+}
+
+- (void)stopInternerReachability {
+    
+    _reachabilityOn = FALSE;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kReachabilityChangedNotification object:nil];
 }
 @end

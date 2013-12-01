@@ -12,4 +12,6 @@
 
 -(MKNetworkOperation *) postDataToServer:(NSMutableDictionary *)params path:(NSString *)path;
 
+-(MKNetworkOperation *) downloadFileFrom:(NSString*) remoteURL toFile:(NSString*) filePath;
+
 @end

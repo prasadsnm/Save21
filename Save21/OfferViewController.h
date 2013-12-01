@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OfferViewController : UIViewController
+@interface OfferViewController : UIViewController <UIWebViewDelegate>
 
 @property (nonatomic,weak) IBOutlet UIWebView *webView;
-@property (nonatomic,strong) NSString *urlString;
+@property (nonatomic,strong) NSString *offerPageID;
+@property (nonatomic,strong) NSString *offerPageURL;
 @end

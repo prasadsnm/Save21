@@ -8,9 +8,7 @@
 
 #import "AccountInfoViewController.h"
 #import "MBProgressHUD.h"
-
 #import "keysAndUrls.h"
-
 
 @interface AccountInfoViewController () {
     MBProgressHUD *HUD;
@@ -89,8 +87,6 @@ enum AboutMe {
     [self.requestChequeButton setTitle:@"REQUEST CHEQUE" forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
-    
-    self.flUploadEngine = [[fileUploadEngine alloc]initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
 }
 
 -(void)refreshAccountInfo {
@@ -100,7 +96,7 @@ enum AboutMe {
     
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_account_info",
                                        [PFUser currentUser].email, @"user_email", nil];
-    self.flOperation = [self.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -128,7 +124,7 @@ enum AboutMe {
          [HUD hide:YES];
          
      }];
-    [self.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
 }
 
 -(void)request_cheque {
@@ -138,7 +134,7 @@ enum AboutMe {
     
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_cheque",
                                        [PFUser currentUser].email, @"user_email", nil];
-    self.flOperation = [self.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -162,7 +158,7 @@ enum AboutMe {
          [HUD hide:YES];
          
      }];
-    [self.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
 }
 
 -(void)viewDidAppear:(BOOL)animated {

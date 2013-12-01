@@ -15,9 +15,9 @@
 @property (strong, nonatomic) NSString *pictureURL;
 @property (strong, nonatomic) NSString *offerid;
 @property (strong, nonatomic) NSString *offerurl;
-@property int total_offered;
-@property int num_of_valid_claims;
-@property float rebate_amount;
+@property (strong, nonatomic) NSNumber *total_offered;
+@property (strong, nonatomic) NSNumber *num_of_valid_claims;
+@property (strong, nonatomic) NSNumber *rebate_amount;
 @property (strong, nonatomic) NSString *bannerPictureURL;
 
 @end

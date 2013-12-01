@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "FetchingManagerDelegate.h"
-#import "fileUploadEngine.h"
 
 @class OffersFetcher;
 
@@ -16,9 +15,9 @@
 
 @property (weak, nonatomic) id<FetchingManagerDelegate> delegate;
 
-@property (nonatomic,strong) fileUploadEngine *flUploadEngine;
 @property (nonatomic,strong) MKNetworkOperation *flOperation;
 
+@property (nonatomic,strong) NSString *currentOffersListHash;
 -(void)fetchOffers;
 
 @end

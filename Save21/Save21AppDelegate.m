@@ -8,10 +8,10 @@
 
 #import "Save21AppDelegate.h"
 #import <Parse/Parse.h>
-#import "Reachability.h"
-#import "MTReachabilityManager.h"
+#import "keysAndUrls.h"
 
 @implementation Save21AppDelegate
+@synthesize flUploadEngine = _flUploadEngine;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -27,8 +27,8 @@
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
                                                            darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
     
-    // Instantiate Shared Manager
-    [MTReachabilityManager sharedManager];
+    self.flUploadEngine = [[fileUploadEngine alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
+    [self.flUploadEngine useCache];
     
     return YES;
 }

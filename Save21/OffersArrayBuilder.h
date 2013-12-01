@@ -12,4 +12,5 @@
 
 + (NSArray *)offersFromJSON:(NSDictionary *)objectNotation;
 
++ (NSString *)getOffersBatchID:(NSDictionary *)objectNotation;
 @end

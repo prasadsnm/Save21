@@ -7,13 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "fileUploadEngine.h"
 #import <Parse/Parse.h>
 #import "MHLazyTableImages.h"
 
 @interface UploadViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate,MHLazyTableImagesDelegate>
 
-@property (nonatomic,strong) fileUploadEngine *flUploadEngine;
 @property (nonatomic,strong) MKNetworkOperation *flOperation;
 
 @end

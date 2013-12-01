@@ -33,4 +33,9 @@
     return offers;
 }
 
++ (NSString *)getOffersBatchID:(NSDictionary *)objectNotation {
+    NSString *batchID = [objectNotation valueForKey:@"batch_ID"];
+    
+    return batchID;
+}
 @end

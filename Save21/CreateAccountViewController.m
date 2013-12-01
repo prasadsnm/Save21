@@ -7,7 +7,7 @@
 //
 
 #import "CreateAccountViewController.h"
-#import "keysAndUrls.h"
+#import "Save21AppDelegate.h"
 
 @interface CreateAccountViewController ()
 
@@ -44,7 +44,6 @@
 @synthesize cityPicker = _cityPicker;
 
 @synthesize flOperation = _flOperation;
-@synthesize flUploadEngine = _flUploadEngine;
 
 - (void)viewDidLoad
 { 
@@ -308,9 +307,8 @@
                 // Hooray! Let them use the app now.
                 
                 //tell our file server to set up this user's directories
-                self.flUploadEngine = [[fileUploadEngine alloc]initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
                 NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.emailAddressField.text,@"user_email", nil];
-                self.flOperation = [self.flUploadEngine postDataToServer:postParams path:@"/indexAPI.php"];
+                self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path:@"/indexAPI.php"];
                 
                 [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
                     NSLog(@"user added success!");
@@ -328,7 +326,7 @@
                      [alert show];
                  }];
                 
-                [self.flUploadEngine enqueueOperation:self.flOperation];
+                [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
                 
                 
             } else {

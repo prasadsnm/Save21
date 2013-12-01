@@ -21,6 +21,8 @@
  */
 
 #import "MHImageCache.h"
+#import <CommonCrypto/CommonDigest.h>
+
 
 @implementation UIImageView (MHImageCache)
 
@@ -75,17 +77,17 @@
 {
 	if (_cacheDirectory == nil)
 	{
-		NSArray* paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+		NSArray* paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+
 		NSString* libraryDirectory = paths[0];
 
-		_cacheDirectory = [[libraryDirectory
-			stringByAppendingPathComponent:@"Private Documents"]
-			stringByAppendingPathComponent:@"Image Cache"];
+		_cacheDirectory = [libraryDirectory stringByAppendingString:@"/thumb_cache"];
 
 		NSFileManager* fileManager = [NSFileManager defaultManager];
 		if (![fileManager fileExistsAtPath:_cacheDirectory])
 		{
 			NSError* error = nil;
+            NSLog(@"Creating directory: %@", _cacheDirectory);
 			if (![fileManager createDirectoryAtPath:_cacheDirectory withIntermediateDirectories:YES attributes:nil error:&error])
 				NSLog(@"Error creating directory: %@", [error description]);
 		}
@@ -121,10 +123,15 @@
 
 - (void)imageFromURL:(NSURL *)url cacheInFile:(BOOL)cacheInFile usingBlock:(MHImageCacheBlock)block
 {
-	NSString *key = [self keyForURL:url];
-
+	NSString *originalURL = [self keyForURL:url];
+    const char *str = [originalURL UTF8String];
+    unsigned char r[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(str, (CC_LONG)strlen(str), r);
+    NSString *key = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                          r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15]];
+    
 	// 1) If we have the image in memory, use it.
-
+    NSLog(@"If we have the image in memory, use it.");
 	UIImage *image = (self.images)[key];
 	if (image != nil)
 	{
@@ -133,12 +140,13 @@
 	}
 
 	// 2) If we have the file locally stored, then load into memory and use it.
-
+    NSLog(@"If we have the file locally stored, then load into memory and use it.");
 	NSString *path = nil;
 	if (cacheInFile)
 	{
-		path = [self.cacheDirectory stringByAppendingPathComponent:key];
+		path = [[self cacheDirectory] stringByAppendingPathComponent:key];
 		image = [UIImage imageWithContentsOfFile:path];
+        NSLog(@"Load image from %@", path);
 		if (image != nil)
 		{
 			(self.images)[key] = image;
@@ -149,7 +157,7 @@
 
 	// 3) If a download for this image is already pending, then add the block 
 	//    to the list of blocks that will be invoked when the download is done.
-
+    NSLog(@"If a download for this image is already pending, then add the block to the list of blocks that will be invoked when the download is done.");
 	block = [block copy];  // move to heap!
 
 	NSMutableArray *array = (self.loadingImages)[key];
@@ -160,7 +168,7 @@
 	}
 
 	// 4) Download the image, store it in a local file (if allowed), and use it.
-
+    NSLog(@"Download the image, store it in a local file (if allowed), and use it.");
 	array = [NSMutableArray arrayWithCapacity:3];
 	[array addObject:block];
 	(self.loadingImages)[key] = array;
@@ -171,18 +179,22 @@
 		queue:[NSOperationQueue mainQueue]
 		completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
 		{
-			NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+			//NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
 			UIImage *image = nil;
-
-			if (error == nil && [httpResponse statusCode] == 200)
+            
+            //if (error == nil && [httpResponse statusCode] == 200)
+			if (error == nil)
 			{
 				image = [[UIImage alloc] initWithData:data];
 				if (image != nil)
 				{
-					if (cacheInFile)
+					if (cacheInFile) {
+                        NSString *path = [[self cacheDirectory] stringByAppendingPathComponent:key];
+                        NSLog(@"Write to :%@",path);
+                        
 						[data writeToFile:path atomically:NO];
-
+                    }
 					(self.images)[key] = image;
 				}
 			}

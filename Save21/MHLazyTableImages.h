@@ -92,7 +92,7 @@
  * If the index-paths get out of sync with the table, then images might end up
  * in the wrong rows.
  */
-@interface MHLazyTableImages : NSObject
+@interface MHLazyTableImages : NSObject <UIScrollViewDelegate>
 
 /* The delegate object. */
 @property (nonatomic, weak) id <MHLazyTableImagesDelegate> delegate;

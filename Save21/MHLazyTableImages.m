@@ -42,9 +42,9 @@
 
 - (void)startDownload:(NSURL *)url indexPath:(NSIndexPath *)indexPath
 {
-	[[MHImageCache sharedInstance] imageFromURL:url cacheInFile:NO usingBlock:^(UIImage *image)
+	[[MHImageCache sharedInstance] imageFromURL:url cacheInFile:YES usingBlock:^(UIImage *image)
 	{
-        NSLog(@"Trying to download image: %@",url);
+        //NSLog(@"Trying to download image: %@",url);
         
 		if (self.tableView != nil)
 		{
@@ -90,8 +90,8 @@
 			[cell lazyTableImages:self didLoadLazyImage:self.placeholderImage];
 
 			// Defer new downloads until scrolling ends
-			if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
-				[self startDownload:url indexPath:indexPath];
+			//if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
+			[self startDownload:url indexPath:indexPath];
 		}
 	}
 }
@@ -123,13 +123,12 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
 	// Load images for all on-screen rows when scrolling is finished
-	if (!decelerate)
-		[self loadImagesForOnscreenRows];
+	//if (!decelerate)
+    [self loadImagesForOnscreenRows];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
 	[self loadImagesForOnscreenRows];
 }
-
 @end

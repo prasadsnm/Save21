@@ -10,7 +10,7 @@
 
 @protocol FetchingManagerDelegate
 
-- (void)didReceiveOffers:(NSArray *)offers;
+- (void)didReceiveOffers:(NSArray *)offers withBatchID:(NSString *)batchID;
 - (void)failedToReceiveOffers;
 
 @end

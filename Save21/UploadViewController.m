@@ -28,7 +28,7 @@
 @property (strong, nonatomic) NSMutableDictionary *DictionaryOfSelectedOfferIDs;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
-@property (strong, nonatomic) NSNumber *currentReceiptID;
+@property (strong, nonatomic) NSString *currentReceiptID;
 @property (strong, nonatomic) MBProgressHUD *HUD;
 
 @end
@@ -38,7 +38,6 @@
 @synthesize offersListTable = _offersListTable;
 @synthesize DictionaryOfSelectedOfferIDs = _DictionaryOfSelectedOfferIDs;
 @synthesize flOperation = _flOperation;
-@synthesize flUploadEngine = _flUploadEngine;
 @synthesize currentReceiptID = _currentReceiptID;
 
 -(NSMutableDictionary *)DictionaryOfSelectedOfferIDs {
@@ -66,7 +65,7 @@
     
     self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
     self.HUD.labelText = @"Please wait";
-    self.self.HUD.detailsLabelText = @"Uploading...";
+    self.HUD.detailsLabelText = @"Uploading...";
     self.HUD.mode = MBProgressHUDModeAnnularDeterminate;
     self.HUD.progress = 0.0f;
     
@@ -98,7 +97,7 @@
     anotherBox = [ImagesBox imageBox];
     anotherOfferBox = [OffersList offersList];
     
-    self.flUploadEngine = [[fileUploadEngine alloc]initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
+    
     
     [self requestReceiptID];
 }
@@ -153,15 +152,15 @@
     
     cell.nameLabel.text = currentOffer.name;
 	cell.updateLabel.text = currentOffer.description;
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",[currentOffer.rebate_amount floatValue]];
     
-    if (currentOffer.total_offered == -1)
+    if ([currentOffer.total_offered intValue] == -1)
         cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
     else {
-        if ( (currentOffer.total_offered - currentOffer.num_of_valid_claims) < 1 )
+        if ( ([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] ) < 1 )
             cell.dateLabel.text = @"SOLD OUT";
         else
-            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims)];
+            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] )];
     }
     
 	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
@@ -200,7 +199,7 @@
 
 -(void)requestReceiptID {
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[PFUser currentUser].email, @"user_email", @"1", @"upload_receipt", nil];
-    self.flOperation = [self.flUploadEngine postDataToServer:postParams path:@"/indexAPI.php"];
+    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -208,14 +207,6 @@
         //handle a successful 200 response
         NSDictionary *responseDict = [operation responseJSON];
         weakSelf.currentReceiptID = [responseDict objectForKey:@"new receipt"];
-    
-        if (weakSelf.currentReceiptID == 0) {
-            //got a bad currentReceiptID
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to request a new receipt ID, please click upload to try again." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:@"Retry", nil];
-            [alert show];
-        } else {
-            NSLog(@"new receiptID is %d", [weakSelf.currentReceiptID intValue]);
-        }
     }
     errorHandler:^(MKNetworkOperation *completedOperation, NSError *error)
      {
@@ -224,7 +215,7 @@
          [alert show];
      }];
     
-    [self.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
 }
 
 -(void)uploadImageBox {
@@ -232,10 +223,10 @@
     
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        [PFUser currentUser].email, @"user_email",
-                                       [self.currentReceiptID stringValue], @"receiptID",
+                                       self.currentReceiptID, @"receiptID",
                                        [NSString stringWithFormat: @"%lu", (unsigned long)anotherBox.imageArray.count],@"num_of_photos",
                                        nil];
-    self.flOperation = [self.flUploadEngine postDataToServer:postParams path:@"/indexAPI.php"];
+    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
     
     NSLog(@"imagebox has %lu images",(unsigned long)anotherBox.imageArray.count);
 
@@ -267,13 +258,13 @@
         self.HUD.progress = progress;
     }];
     
-    [self.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
 }
 
 -(void)addTo_receipts_and_offers_table {
     for (NSNumber* key in self.DictionaryOfSelectedOfferIDs) {
-        NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[key stringValue], @"offerID", [self.currentReceiptID stringValue], @"receiptID", nil];
-        self.flOperation = [self.flUploadEngine postDataToServer:postParams path:@"/indexAPI.php"];
+        NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[key stringValue], @"offerID", self.currentReceiptID, @"receiptID", nil];
+        self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
         
         [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
             //handle a successful 200 response
@@ -285,7 +276,7 @@
                                   }];
         
         
-        [self.flUploadEngine enqueueOperation:self.flOperation];
+        [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
     }
 }
 
