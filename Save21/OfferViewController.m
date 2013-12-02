@@ -31,7 +31,6 @@ static inline Reachability* defaultReachability () {
 @property (weak, nonatomic) IBOutlet UILabel *warningLabel;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelHeight;
 @property (strong,nonatomic) MBProgressHUD *HUD;
-@property (nonatomic,strong) fileUploadEngine *flUploadEngine;
 @property (nonatomic,strong) MKNetworkOperation *flOperation;
 
 @end
@@ -44,7 +43,6 @@ static inline Reachability* defaultReachability () {
 @synthesize labelHeight = _labelHeight;
 @synthesize HUD = _HUD;
 @synthesize flOperation = _flOperation;
-@synthesize flUploadEngine = _flUploadEngine;
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -69,20 +67,20 @@ static inline Reachability* defaultReachability () {
     NSLog (@"Received offer page ID %@ to display",self.offerPageID);
     self.webView.scalesPageToFit = NO;
     self.webView.delegate = self;
-    
-    self.flUploadEngine = [[fileUploadEngine alloc]initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
 }
 
 
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    NSLog(@"FAIL TO LOAD WEB ARCHIVE");
     NSLog(@"%@",[error description]);
 }
 
 -(void)refreshWebPage {
     NSString *urlFile = [NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, self.offerPageURL];
-    NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingString:@"/offer_cache"];
-    NSString *cacheFile = [cachesPath stringByAppendingPathComponent:[NSString stringWithFormat:@"/%@",self.offerPageURL]];
-    NSURL *url=[NSURL fileURLWithPath:cacheFile];
+    NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];;
+    NSString *cacheFile = [cachesPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",self.offerPageURL]];
+    
+    NSURL *url = [NSURL fileURLWithPath:cacheFile];
     
     NSFileManager* fileManager = [NSFileManager defaultManager];
     
@@ -98,6 +96,8 @@ static inline Reachability* defaultReachability () {
     //Check to see if a file exists a the location
     if ([[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
         NSLog(@"Found web page in cache!");
+        
+        NSLog(@"Opening from: %@", [url description]);
         //Code for customising when the cache reloads would go here.
         [self.webView loadRequest:[NSURLRequest requestWithURL:url] ];
     }
@@ -108,11 +108,9 @@ static inline Reachability* defaultReachability () {
         //If no cached webpaged exists
         NSLog(@"Need to download web page: %@",urlFile);
         
-        self.flOperation = [self.flUploadEngine downloadFileFrom:urlFile toFile:cacheFile];
+        self.flOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:urlFile toFile:cacheFile];
         
         [self.flOperation onDownloadProgressChanged:^(double progress) {
-            
-            //DLog(@"%.2f", progress*100.0);
             self.HUD.progress = progress;
         }];
 
@@ -125,7 +123,8 @@ static inline Reachability* defaultReachability () {
             NSLog(@"Web page %@ downloaded to %@",urlFile, cacheFile);
             
             //display the downloaded page in the webview
-            [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:cacheFile]]];
+            [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
+            
             connected = YES;
             [weakSelf removeNoInternetWarning];
         }
@@ -206,7 +205,7 @@ static inline Reachability* defaultReachability () {
             NSLog(@"Reachable");
             [self performSelector:@selector(removeNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
             connected = YES;
-            [self refreshWebPage];
+            //[self refreshWebPage];
             break;
         }
             

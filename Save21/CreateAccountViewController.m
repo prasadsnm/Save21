@@ -218,6 +218,11 @@
         self.lastNameField.text = [self.lastNameField.text stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[self.lastNameField.text substringToIndex:1] uppercaseString]];
     }
     
+    if (textField == self.emailAddressField && self.emailAddressField.text.length) {
+        self.emailAddressField.text = [self.emailAddressField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        self.emailAddressField.text = [self.emailAddressField.text lowercaseString];
+    }
+    
     if (textField == self.postalField && self.postalField.text.length) {
         self.postalField.text = [self.postalField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         self.postalField.text = [self.postalField.text uppercaseString];

@@ -21,7 +21,6 @@
     
     [op addDownloadStream:[NSOutputStream outputStreamToFileAtPath:filePath
                                                             append:YES]];
-    
     [self enqueueOperation:op];
     return op;
 }

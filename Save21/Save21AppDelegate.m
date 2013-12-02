@@ -28,7 +28,6 @@
                                                            darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
     
     self.flUploadEngine = [[fileUploadEngine alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
-    [self.flUploadEngine useCache];
     
     return YES;
 }
