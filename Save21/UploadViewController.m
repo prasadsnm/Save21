@@ -21,7 +21,6 @@
     //NSArray *_offers; //replaced by the singleton offerslist object
     ImagesBox *anotherBox;
     OffersList *anotherOfferBox;
-    MHLazyTableImages *_lazyImages;
 }
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITableView *offersListTable;
@@ -43,17 +42,6 @@
 -(NSMutableDictionary *)DictionaryOfSelectedOfferIDs {
     if (_DictionaryOfSelectedOfferIDs == nil) _DictionaryOfSelectedOfferIDs = [[NSMutableDictionary alloc] init];
     return _DictionaryOfSelectedOfferIDs;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-	if ((self = [super initWithCoder:aDecoder]))
-	{
-		_lazyImages = [[MHLazyTableImages alloc] init];
-		_lazyImages.placeholderImage = [UIImage imageNamed:@"Placeholder"];
-		_lazyImages.delegate = self;
-	}
-	return self;
 }
 
 - (void)viewDidLoad
@@ -92,12 +80,9 @@
     
     [self.offersListTable setDataSource:self];
     [self.offersListTable setDelegate:self];
-    _lazyImages.tableView = self.offersListTable;
     
     anotherBox = [ImagesBox imageBox];
     anotherOfferBox = [OffersList offersList];
-    
-    
     
     [self requestReceiptID];
 }
@@ -162,8 +147,6 @@
         else
             cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] )];
     }
-    
-	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
     
     //draw check mark on selected cell
     if ( [self.DictionaryOfSelectedOfferIDs objectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid] )
@@ -299,7 +282,6 @@
         [[PFUser currentUser] incrementKey:@"numberOfReceiptsInProcess"];
         [[PFUser currentUser] saveInBackground];
         
-        
 		[self performSegueWithIdentifier:@"Done Uploading" sender:self];
 	} else if ([title isEqualToString:@"Dismiss"]) {
         [self performSegueWithIdentifier:@"Back to PicturesView" sender:self];
@@ -316,45 +298,6 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-}
-
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-	[_lazyImages scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-	[_lazyImages scrollViewDidEndDecelerating:scrollView];
-}
-
-#pragma mark - MHLazyTableImagesDelegate
-
-- (NSURL *)lazyTableImages:(MHLazyTableImages *)lazyTableImages lazyImageURLForIndexPath:(NSIndexPath *)indexPath
-{
-	singleOffer *currentOffer = anotherOfferBox.offersArray[indexPath.row];
-    NSLog(@"Grabbing table image: %@",currentOffer.pictureURL);
-	return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL]];
-}
-
-- (UIImage *)lazyTableImages:(MHLazyTableImages *)lazyTableImages postProcessLazyImage:(UIImage *)image forIndexPath:(NSIndexPath *)indexPath
-{
-    if (image.size.width != AppIconHeight && image.size.height != AppIconHeight)
- 		return [self scaleImage:image toSize:CGSizeMake(AppIconHeight, AppIconHeight)];
-    else
-        return image;
-}
-
-- (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size
-{
-	UIGraphicsBeginImageContextWithOptions(size, YES, 0.0f);
-	CGRect imageRect = CGRectMake(0.0f, 0.0f, size.width, size.height);
-	[image drawInRect:imageRect];
-	UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	return newImage;
 }
 
 @end

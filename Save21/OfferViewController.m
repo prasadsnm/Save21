@@ -162,6 +162,16 @@ static inline Reachability* defaultReachability () {
     }];
 }
 
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    NSLog(@"Cancelled downloading of webpage.");
+    //cancel the download if it isnt done yet
+    //([self.flOperation isExecuting]){
+    //    [self.flOperation cancel];
+    //}
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];

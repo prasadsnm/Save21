@@ -8,9 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
-#import "MHLazyTableImages.h"
 
-@interface UploadViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate,MHLazyTableImagesDelegate>
+@interface UploadViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate>
 
 @property (nonatomic,strong) MKNetworkOperation *flOperation;
 

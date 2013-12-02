@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UrlImageView.h"
 
 @interface OfferTableCell : UITableViewCell
 
-@property (nonatomic, weak) IBOutlet UIImageView* profileImageView;
+@property (nonatomic, weak) IBOutlet UrlImageView *profileImageView;
 
 //@property (nonatomic, weak) IBOutlet UIImageView* picImageView;
 

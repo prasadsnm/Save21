@@ -85,8 +85,6 @@
 		2243ADE618209CE200619ECB /* LeftToRightSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADC518209CE200619ECB /* LeftToRightSegue.m */; };
 		2243ADE718209CE200619ECB /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADC618209CE200619ECB /* LoginViewController.m */; };
 		2243ADE818209CE200619ECB /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADC718209CE200619ECB /* MBProgressHUD.m */; };
-		2243ADE918209CE200619ECB /* MHImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADC818209CE200619ECB /* MHImageCache.m */; };
-		2243ADEA18209CE200619ECB /* MHLazyTableImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADC918209CE200619ECB /* MHLazyTableImages.m */; };
 		2243ADEC18209CE200619ECB /* NoAnimationSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADCB18209CE200619ECB /* NoAnimationSegue.m */; };
 		2243ADED18209CE200619ECB /* OffersArrayBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADCC18209CE200619ECB /* OffersArrayBuilder.m */; };
 		2243ADEE18209CE200619ECB /* OffersList.m in Sources */ = {isa = PBXBuildFile; fileRef = 2243ADCD18209CE200619ECB /* OffersList.m */; };
@@ -209,8 +207,6 @@
 		2243AD6718209BD500619ECB /* LeftToRightSegue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeftToRightSegue.h; sourceTree = "<group>"; };
 		2243AD6818209BD500619ECB /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		2243AD6918209BD500619ECB /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
-		2243AD6A18209BD600619ECB /* MHImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MHImageCache.h; sourceTree = "<group>"; };
-		2243AD6B18209BD600619ECB /* MHLazyTableImages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MHLazyTableImages.h; sourceTree = "<group>"; };
 		2243AD6D18209BD600619ECB /* NoAnimationSegue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoAnimationSegue.h; sourceTree = "<group>"; };
 		2243AD6E18209BD600619ECB /* OffersArrayBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OffersArrayBuilder.h; sourceTree = "<group>"; };
 		2243AD6F18209BD600619ECB /* OffersList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OffersList.h; sourceTree = "<group>"; };
@@ -269,8 +265,6 @@
 		2243ADC518209CE200619ECB /* LeftToRightSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftToRightSegue.m; sourceTree = "<group>"; };
 		2243ADC618209CE200619ECB /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		2243ADC718209CE200619ECB /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		2243ADC818209CE200619ECB /* MHImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHImageCache.m; sourceTree = "<group>"; };
-		2243ADC918209CE200619ECB /* MHLazyTableImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHLazyTableImages.m; sourceTree = "<group>"; };
 		2243ADCB18209CE200619ECB /* NoAnimationSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoAnimationSegue.m; sourceTree = "<group>"; };
 		2243ADCC18209CE200619ECB /* OffersArrayBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OffersArrayBuilder.m; sourceTree = "<group>"; };
 		2243ADCD18209CE200619ECB /* OffersList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OffersList.m; sourceTree = "<group>"; };
@@ -745,10 +739,6 @@
 				2243AE1618209CEF00619ECB /* GHSidebarNav */,
 				2243AD6918209BD500619ECB /* MBProgressHUD.h */,
 				2243ADC718209CE200619ECB /* MBProgressHUD.m */,
-				2243AD6A18209BD600619ECB /* MHImageCache.h */,
-				2243ADC818209CE200619ECB /* MHImageCache.m */,
-				2243AD6B18209BD600619ECB /* MHLazyTableImages.h */,
-				2243ADC918209CE200619ECB /* MHLazyTableImages.m */,
 				2243AE2218209CEF00619ECB /* MKNetworkKit */,
 			);
 			name = "External Libraries";
@@ -998,7 +988,6 @@
 				2243ADF618209CE200619ECB /* SettingsViewController.m in Sources */,
 				2243AE4118209CEF00619ECB /* UrlImageView.m in Sources */,
 				2243ADFA18209CE200619ECB /* SignInViewController.m in Sources */,
-				2243ADEA18209CE200619ECB /* MHLazyTableImages.m in Sources */,
 				2243ADDE18209CE200619ECB /* AboutViewController.m in Sources */,
 				2243AD221820992A00619ECB /* Save21AppDelegate.m in Sources */,
 				2243ADE518209CE200619ECB /* ImagesBox.m in Sources */,
@@ -1030,7 +1019,6 @@
 				2243AE3E18209CEF00619ECB /* SDWebImageDownloader.m in Sources */,
 				2243ADF018209CE200619ECB /* OffersListViewController.m in Sources */,
 				2243AE4318209CEF00619ECB /* GHSidebarSearchViewController.m in Sources */,
-				2243ADE918209CE200619ECB /* MHImageCache.m in Sources */,
 				2243ADE818209CE200619ECB /* MBProgressHUD.m in Sources */,
 				2243ADF418209CE200619ECB /* PicturesViewController.m in Sources */,
 				2243ADE618209CE200619ECB /* LeftToRightSegue.m in Sources */,

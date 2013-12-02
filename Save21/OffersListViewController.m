@@ -12,7 +12,6 @@
 #import "FetchingManager.h"
 #import "keysAndUrls.h"
 #import "OffersList.h"
-#import "MHLazyTableImages.h"
 #import "MBProgressHUD.h"
 #import "OfferTableCell.h"
 #import "Reachability.h"
@@ -32,13 +31,12 @@ static inline Reachability* defaultReachability () {
 
 #define AppIconHeight    75.0f
 
-@interface OffersListViewController () <FetchingManagerDelegate,MHLazyTableImagesDelegate> {
+@interface OffersListViewController () <FetchingManagerDelegate> {
     FetchingManager *_manager;
     OffersList *offersBox;
     
     long indexOfSelectedCell;
-    
-    MHLazyTableImages *_lazyImages;
+
     
     MBProgressHUD *HUD;
     
@@ -67,16 +65,6 @@ static inline Reachability* defaultReachability () {
 @synthesize warningLabel = _warningLabel;
 @synthesize scrollPictureView = _scrollPictureView;
 
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-	if ((self = [super initWithCoder:aDecoder]))
-	{
-		_lazyImages = [[MHLazyTableImages alloc] init];
-		_lazyImages.placeholderImage = [UIImage imageNamed:@"Placeholder"];
-		_lazyImages.delegate = self;
-	}
-	return self;
-}
 
 - (void)viewDidLoad
 {
@@ -112,9 +100,6 @@ static inline Reachability* defaultReachability () {
     
     [self.offersListTable setDataSource:self];
     [self.offersListTable setDelegate:self];
-    
-    _lazyImages.tableView = self.offersListTable;
-    
     
     _manager = [[FetchingManager alloc] init];
     _manager.delegate = self;
@@ -227,7 +212,6 @@ static inline Reachability* defaultReachability () {
     [super viewDidUnload];
     
     // Release any retained subviews of the main view.
-    _lazyImages.tableView = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kReachabilityChangedNotification object:nil];
 }
 
@@ -307,8 +291,9 @@ static inline Reachability* defaultReachability () {
             cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] )];
     }
     
-	[_lazyImages addLazyImageForCell:cell withIndexPath:indexPath];
+    NSString *thumbnail_URL = [NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL];
     
+    [cell.profileImageView setImageFromUrl:YES withUrl:thumbnail_URL];
 	return cell;
 }
 
@@ -339,45 +324,6 @@ static inline Reachability* defaultReachability () {
     offerURLForSegue = arrayOfBannersOfferURLs[vid];
     
     [self performSegueWithIdentifier:@"show Offer" sender:self];
-}
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-	[_lazyImages scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-	[_lazyImages scrollViewDidEndDecelerating:scrollView];
-}
-
-#pragma mark - MHLazyTableImagesDelegate
-
-- (NSURL *)lazyTableImages:(MHLazyTableImages *)lazyTableImages lazyImageURLForIndexPath:(NSIndexPath *)indexPath
-{
-	singleOffer *currentOffer = offersBox.offersArray[indexPath.row];
-    NSURL *thumbnail_url =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL]];
-    NSLog(@"Showing thumbnail image from %@", [thumbnail_url description]);
-	return thumbnail_url;
-}
-
-- (UIImage *)lazyTableImages:(MHLazyTableImages *)lazyTableImages postProcessLazyImage:(UIImage *)image forIndexPath:(NSIndexPath *)indexPath
-{
-    if (image.size.width != AppIconHeight && image.size.height != AppIconHeight)
- 		return [self scaleImage:image toSize:CGSizeMake(AppIconHeight, AppIconHeight)];
-    else
-        return image;
-}
-
-- (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size
-{
-	UIGraphicsBeginImageContextWithOptions(size, YES, 0.0f);
-	CGRect imageRect = CGRectMake(0.0f, 0.0f, size.width, size.height);
-	[image drawInRect:imageRect];
-	UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
-	return newImage;
 }
 
 #pragma mark Notification Handling
