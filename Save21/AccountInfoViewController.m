@@ -9,6 +9,7 @@
 #import "AccountInfoViewController.h"
 #import "MBProgressHUD.h"
 #import "keysAndUrls.h"
+#import "OffersListRootController.h"
 
 @interface AccountInfoViewController () {
     MBProgressHUD *HUD;
@@ -179,6 +180,12 @@ enum AboutMe {
 
     } else {
         [self request_cheque];
+    }
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"backToMenu"]) {
+        [segue.destinationViewController setShouldShowSliderBarAtStart:YES];
     }
 }
 

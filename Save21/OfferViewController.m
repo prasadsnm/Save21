@@ -24,15 +24,17 @@ static inline Reachability* defaultReachability () {
     return _reachability;
 }
 
-@interface OfferViewController () {
-    BOOL connected;
-}
+@interface OfferViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *warningLabel;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelHeight;
 @property (strong,nonatomic) MBProgressHUD *HUD;
 @property (nonatomic,strong) MKNetworkOperation *flOperation;
-
+@property (nonatomic,strong) NSString *cachesPath;
+@property (nonatomic,strong) NSString *cacheFile;
+@property (nonatomic,strong) NSString *urlFile;
+@property (nonatomic,strong) NSFileManager* fileManager;
+@property BOOL connected;
 @end
 
 @implementation OfferViewController
@@ -43,6 +45,9 @@ static inline Reachability* defaultReachability () {
 @synthesize labelHeight = _labelHeight;
 @synthesize HUD = _HUD;
 @synthesize flOperation = _flOperation;
+@synthesize cacheFile = _cacheFile;
+@synthesize cachesPath = _cachesPath;
+@synthesize urlFile = _urlFile;
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -55,7 +60,7 @@ static inline Reachability* defaultReachability () {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    connected = YES;
+    self.connected = YES;
     
 	// Do any additional setup after loading the view.
     self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
@@ -67,6 +72,12 @@ static inline Reachability* defaultReachability () {
     NSLog (@"Received offer page ID %@ to display",self.offerPageID);
     self.webView.scalesPageToFit = NO;
     self.webView.delegate = self;
+    
+    self.cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
+    self.cacheFile = [self.cachesPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",self.offerPageURL]];
+    self.urlFile = [NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, self.offerPageURL];
+    
+    self.fileManager = [NSFileManager defaultManager];
 }
 
 
@@ -76,19 +87,16 @@ static inline Reachability* defaultReachability () {
 }
 
 -(void)refreshWebPage {
-    NSString *urlFile = [NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, self.offerPageURL];
     NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];;
     NSString *cacheFile = [cachesPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",self.offerPageURL]];
     
     NSURL *url = [NSURL fileURLWithPath:cacheFile];
     
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    
-    if (![fileManager fileExistsAtPath:cachesPath])
+    if (![self.fileManager fileExistsAtPath:cachesPath])
     {
         NSError* error = nil;
         NSLog(@"Creating directory: %@", cachesPath);
-        if (![fileManager createDirectoryAtPath:cachesPath withIntermediateDirectories:YES attributes:nil error:&error])
+        if (![self.fileManager createDirectoryAtPath:cachesPath withIntermediateDirectories:YES attributes:nil error:&error])
             NSLog(@"Error creating directory: %@", [error description]);
     }
     NSLog(@"Trying to open web page from cache: %@",cacheFile);
@@ -103,45 +111,52 @@ static inline Reachability* defaultReachability () {
     }
     else
     {
-        [self.HUD show:YES];
-        
-        //If no cached webpaged exists
-        NSLog(@"Need to download web page: %@",urlFile);
-        
-        self.flOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:urlFile toFile:cacheFile];
-        
-        [self.flOperation onDownloadProgressChanged:^(double progress) {
-            self.HUD.progress = progress;
-        }];
-
-        __weak typeof(self) weakSelf = self;
-        [self.flOperation addCompletionHandler:^(MKNetworkOperation* completedRequest) {
-            [weakSelf.HUD hide:YES];
-            
-            DLog(@"%@", completedRequest);
-            weakSelf.HUD.progress = 0.0f;
-            NSLog(@"Web page %@ downloaded to %@",urlFile, cacheFile);
-            
-            //display the downloaded page in the webview
-            [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
-            
-            connected = YES;
-            [weakSelf removeNoInternetWarning];
-        }
-        errorHandler:^(MKNetworkOperation *errorOp, NSError* error) {
-            [weakSelf.HUD hide:YES];
-            
-            DLog(@"%@", error);
-            NSLog(@"Can't download web page: %@",urlFile);
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Loading Error" message: @"It appears you are not online. Please connect to the Internet to load this page." delegate: nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-            
-            connected = NO;
-            [weakSelf showNoInternetWarning];
-        }];
+        [self downloadWebPage];
     }
 }
+
+-(void)downloadWebPage {
+    [self.HUD show:YES];
+    
+    //If no cached webpaged exists
+    NSLog(@"Need to download web page: %@",self.urlFile);
+    
+    self.flOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:self.urlFile toFile:self.cacheFile];
+    
+    [self.flOperation onDownloadProgressChanged:^(double progress) {
+        self.HUD.progress = progress;
+    }];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.flOperation addCompletionHandler:^(MKNetworkOperation* completedRequest) {
+        NSURL *url = [NSURL fileURLWithPath:weakSelf.cacheFile];
+        
+        [weakSelf.HUD hide:YES];
+        weakSelf.HUD.progress = 0.0f;
+        NSLog(@"Web page %@ downloaded to %@",weakSelf.urlFile, weakSelf.cacheFile);
+        
+        //display the downloaded page in the webview
+        [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
+        
+        weakSelf.connected = YES;
+        [weakSelf removeNoInternetWarning];
+    }
+    errorHandler:^(MKNetworkOperation *errorOp, NSError* error) {
+        [weakSelf.HUD hide:YES];
+        NSLog(@"Can't download web page: %@",weakSelf.urlFile);
+                                  
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Loading Error" message: @"It appears you are not online. Please connect to the Internet to load this page." delegate: nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+                                  
+        weakSelf.connected = NO;
+        [weakSelf showNoInternetWarning];
+    }];
+}
+
+- (IBAction)refreshPressed:(UIBarButtonItem *)sender {
+    [self downloadWebPage];
+}
+
 
 -(void)showNoInternetWarning {
     self.labelHeight.constant = 35;
@@ -167,9 +182,10 @@ static inline Reachability* defaultReachability () {
     
     NSLog(@"Cancelled downloading of webpage.");
     //cancel the download if it isnt done yet
-    //([self.flOperation isExecuting]){
-    //    [self.flOperation cancel];
-    //}
+    if([self.flOperation isExecuting]){
+        [self.fileManager removeItemAtPath:self.cacheFile error:NULL];
+        [self.flOperation cancel];
+    }
 }
 
 - (void)viewDidUnload
@@ -186,7 +202,7 @@ static inline Reachability* defaultReachability () {
 
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     if ([identifier isEqualToString:@"Go to camera view"]) {
-        if (connected)
+        if (self.connected)
             return YES;
         else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Take picture" message: @"It appears you are not online. This functions requires that you are online in order to use it. Please connect to internet and try again." delegate: nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -206,7 +222,7 @@ static inline Reachability* defaultReachability () {
         case NotReachable: {
             NSLog(@"Unreachable");
             [self performSelector:@selector(showNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
-            connected = NO;
+            self.connected = NO;
             break;
         }
             
@@ -214,7 +230,7 @@ static inline Reachability* defaultReachability () {
         case ReachableViaWWAN: {
             NSLog(@"Reachable");
             [self performSelector:@selector(removeNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
-            connected = YES;
+            self.connected = YES;
             //[self refreshWebPage];
             break;
         }

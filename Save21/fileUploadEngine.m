@@ -20,7 +20,7 @@
     MKNetworkOperation *op = [self operationWithURLString:remoteURL];
     
     [op addDownloadStream:[NSOutputStream outputStreamToFileAtPath:filePath
-                                                            append:YES]];
+                                                            append:NO]];
     [self enqueueOperation:op];
     return op;
 }

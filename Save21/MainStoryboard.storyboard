@@ -292,7 +292,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="brH-BA-Na9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1360" y="1206"/>
+            <point key="canvasLocation" x="1388" y="1290"/>
         </scene>
         <!--Offers List View Controller - Offers-->
         <scene sceneID="u0Z-C8-j34">
@@ -467,7 +467,13 @@
                             <constraint firstItem="K8X-Bi-Do6" firstAttribute="top" secondItem="VxS-Y8-moj" secondAttribute="bottom" id="nRG-o9-cab"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Offer Details" id="5Cd-QH-bAm"/>
+                    <navigationItem key="navigationItem" title="Offer Details" id="5Cd-QH-bAm">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="xtU-8g-b55">
+                            <connections>
+                                <action selector="refreshPressed:" destination="dTu-IH-uD0" id="Y0L-vh-7MW"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="labelHeight" destination="jfI-fA-glh" id="2fw-U2-PC3"/>
@@ -519,7 +525,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oOk-4N-eYC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3327" y="203"/>
+            <point key="canvasLocation" x="3803" y="1063"/>
         </scene>
         <!--Pictures View Controller-->
         <scene sceneID="QVY-dn-WpT">
@@ -835,7 +841,7 @@
                         <barButtonItem key="leftBarButtonItem" image="arrow.png" width="28" id="gDV-SV-vtc">
                             <color key="tintColor" red="0.027450980392156862" green="0.23921568627450979" blue="0.18823529411764706" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
-                                <segue destination="oma-Tb-eZZ" kind="custom" customClass="LeftToRightSegue" id="2hq-sq-vqD"/>
+                                <segue destination="oma-Tb-eZZ" kind="custom" identifier="backToMenu" customClass="LeftToRightSegue" id="2hq-sq-vqD"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1036,7 +1042,7 @@
                         <barButtonItem key="leftBarButtonItem" image="arrow.png" id="RUd-lA-F4d">
                             <color key="tintColor" red="0.027450980390000001" green="0.23921568630000001" blue="0.18823529410000001" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
-                                <segue destination="oma-Tb-eZZ" kind="custom" customClass="LeftToRightSegue" id="Oaq-8A-zQ0"/>
+                                <segue destination="oma-Tb-eZZ" kind="custom" identifier="backToMenu" customClass="LeftToRightSegue" id="Oaq-8A-zQ0"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1202,7 +1208,7 @@
                         <barButtonItem key="leftBarButtonItem" image="arrow.png" id="m8u-st-c4F">
                             <color key="tintColor" red="0.027450980390000001" green="0.23921568630000001" blue="0.18823529410000001" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
-                                <segue destination="oma-Tb-eZZ" kind="custom" customClass="LeftToRightSegue" id="5nX-wx-e7y"/>
+                                <segue destination="oma-Tb-eZZ" kind="custom" identifier="backToMenu" customClass="LeftToRightSegue" id="5nX-wx-e7y"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1752,7 +1758,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="dI8-jT-r3y"/>
-        <segue reference="vGL-wv-TBb"/>
-        <segue reference="t3N-5f-lZs"/>
+        <segue reference="HKE-dN-bAc"/>
+        <segue reference="5nX-wx-e7y"/>
     </inferredMetricsTieBreakers>
 </document>

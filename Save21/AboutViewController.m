@@ -8,6 +8,7 @@
 
 #import "AboutViewController.h"
 #import "keysAndUrls.h"
+#import "OffersListRootController.h"
 
 @interface AboutViewController ()
 @property (nonatomic,weak) IBOutlet UIWebView *webView;
@@ -38,6 +39,12 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"backToMenu"]) {
+        [segue.destinationViewController setShouldShowSliderBarAtStart:YES];
+    }
 }
 
 @end

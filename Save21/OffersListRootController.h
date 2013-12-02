@@ -10,4 +10,6 @@
 
 @interface OffersListRootController : UIViewController
 
+@property BOOL shouldShowSliderBarAtStart;
+
 @end

@@ -158,6 +158,10 @@
         cell.accessoryType=UITableViewCellAccessoryNone;
     }
     
+    //set the picture for each cell
+    NSString *thumbnail_URL = [NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL];
+    
+    [cell.profileImageView setImageFromUrl:YES withUrl:thumbnail_URL];
 	return cell;
 }
 

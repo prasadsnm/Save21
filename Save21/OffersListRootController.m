@@ -15,6 +15,7 @@
 @end
 
 @implementation OffersListRootController
+@synthesize shouldShowSliderBarAtStart = _shouldShowSliderBarAtStart;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -28,10 +29,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-}
-
--(void)viewWillAppear:(BOOL)animated {
     // Do any additional setup after loading the view.
     SidebarController* menuVc = [self.storyboard instantiateViewControllerWithIdentifier:@"SidebarController"];
     UIColor *bgColor = [UIColor whiteColor];
@@ -47,9 +44,13 @@
     revealController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     
     [self presentViewController:revealController animated:YES completion:^{
-        ///
+        //show sider bar
+        if (self.shouldShowSliderBarAtStart)
+            [revealController toggleSidebar:YES duration:0];
     }];
+
 }
+
 
 - (void)didReceiveMemoryWarning
 {

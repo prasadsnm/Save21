@@ -7,7 +7,7 @@
 //
 
 #import "SettingsViewController.h"
-
+#import "OffersListRootController.h"
 #import "keysAndUrls.h"
 
 @interface SettingsViewController () {
@@ -119,6 +119,12 @@
 -(void)OpenLink:(NSString *)link {
     NSString* launchUrl = link;
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString: launchUrl]];
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"backToMenu"]) {
+        [segue.destinationViewController setShouldShowSliderBarAtStart:YES];
+    }
 }
 
 #pragma mark - Table view delegate

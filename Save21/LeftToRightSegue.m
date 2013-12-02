@@ -27,7 +27,7 @@
     [sourceViewController.navigationController.view.layer addAnimation:transition
                                                                 forKey:kCATransition];
     
-    [sourceViewController.navigationController pushViewController:destinationController animated:NO];
+    [sourceViewController.navigationController pushViewController:destinationController animated:YES];
     
 }
 
