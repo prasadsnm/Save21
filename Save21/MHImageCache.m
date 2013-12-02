@@ -179,12 +179,11 @@
 		queue:[NSOperationQueue mainQueue]
 		completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
 		{
-			//NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+			NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
 			UIImage *image = nil;
             
-            //if (error == nil && [httpResponse statusCode] == 200)
-			if (error == nil)
+            if (error == nil && [httpResponse statusCode] == 200)
 			{
 				image = [[UIImage alloc] initWithData:data];
 				if (image != nil)

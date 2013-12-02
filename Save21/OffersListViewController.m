@@ -143,8 +143,8 @@ static inline Reachability* defaultReachability () {
 - (void)didReceiveOffers:(NSArray *)offers withBatchID:(NSString *)batchID
 {
     
-    [self removeNoInternetWarning];
-    connected = YES;
+    //[self removeNoInternetWarning];
+    //connected = YES;
     
     NSLog(@"Got offer batch hash: %@",batchID);
     
@@ -170,7 +170,7 @@ static inline Reachability* defaultReachability () {
         //NSLog(@"%@",[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]);
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+    //dispatch_async(dispatch_get_main_queue(), ^{
         //remove the old scroll view if it exists
         if ([self.scrollPictureView isKindOfClass:[AOScrollerView class]]) {
             [self.scrollPictureView removeFromSuperview];
@@ -188,7 +188,7 @@ static inline Reachability* defaultReachability () {
         [HUD hide:YES];
         
         [self.offersListTable reloadData];
-    });
+    //});
 }
 
 -(void)failedToReceiveOffers {
@@ -312,10 +312,6 @@ static inline Reachability* defaultReachability () {
 	return cell;
 }
 
--(void)refreshTableView {
-    [self.offersListTable reloadData];
-}
-
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     if ([identifier isEqualToString:@"Go to camera view"]) {
         if (connected)
@@ -361,7 +357,9 @@ static inline Reachability* defaultReachability () {
 - (NSURL *)lazyTableImages:(MHLazyTableImages *)lazyTableImages lazyImageURLForIndexPath:(NSIndexPath *)indexPath
 {
 	singleOffer *currentOffer = offersBox.offersArray[indexPath.row];
-	return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL]];
+    NSURL *thumbnail_url =[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL]];
+    NSLog(@"Showing thumbnail image from %@", [thumbnail_url description]);
+	return thumbnail_url;
 }
 
 - (UIImage *)lazyTableImages:(MHLazyTableImages *)lazyTableImages postProcessLazyImage:(UIImage *)image forIndexPath:(NSIndexPath *)indexPath
