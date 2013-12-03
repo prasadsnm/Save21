@@ -87,7 +87,7 @@ static inline Reachability* defaultReachability () {
 }
 
 -(void)refreshWebPage {
-    NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];;
+    NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
     NSString *cacheFile = [cachesPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",self.offerPageURL]];
     
     NSURL *url = [NSURL fileURLWithPath:cacheFile];
@@ -101,7 +101,7 @@ static inline Reachability* defaultReachability () {
     }
     NSLog(@"Trying to open web page from cache: %@",cacheFile);
     
-    //Check to see if a file exists a the location
+    //Check to see if the file exists at the location
     if ([[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
         NSLog(@"Found web page in cache!");
         
@@ -111,15 +111,14 @@ static inline Reachability* defaultReachability () {
     }
     else
     {
+        //If no cached webpaged exists
+        NSLog(@"Need to download web page: %@",self.urlFile);
         [self downloadWebPage];
     }
 }
 
 -(void)downloadWebPage {
     [self.HUD show:YES];
-    
-    //If no cached webpaged exists
-    NSLog(@"Need to download web page: %@",self.urlFile);
     
     self.flOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:self.urlFile toFile:self.cacheFile];
     

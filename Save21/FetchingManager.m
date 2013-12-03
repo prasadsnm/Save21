@@ -10,16 +10,20 @@
 #import "OffersArrayBuilder.h"
 #import "keysAndUrls.h"
 
+static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
+
 @interface FetchingManager ()
 
 @property (nonatomic,strong) NSString *cachesPath;
 @property (nonatomic,strong) NSString *cacheFile;
 @property (nonatomic,strong) NSUserDefaults *defaults;
+@property (nonatomic,strong) NSString *offerPageCachesPath;
 
 @end
 
 @implementation FetchingManager
 @synthesize flOperation = _flOperation;
+@synthesize precachingOperation = _precachingOperation;
 @synthesize defaults = _defaults;
 
 - (id)init
@@ -28,6 +32,7 @@
     if (self) {
         self.cachesPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
         self.cacheFile = [self.cachesPath stringByAppendingPathComponent:@"/offers-cache-file.sav"];
+        self.offerPageCachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
     }
     return self;
 }
@@ -55,6 +60,7 @@
         //load offers from cache
         //get the responseDict from cache file
         NSDictionary *responseDict = [[NSDictionary alloc] initWithContentsOfFile:weakSelf.cacheFile];
+        
         //send the json file to offer table builder
         [weakSelf receivedOffersJSON:responseDict];
     }];
@@ -101,6 +107,7 @@
             NSDictionary *responseDict = [[NSDictionary alloc] initWithContentsOfFile:self.cacheFile];
             //send the json file to offer table builder
             [self receivedOffersJSON:responseDict];
+            
         } else {
             NSLog(@"The cached offer list's hash is different from servers! Proceed by downloading from server.");
             [self downloadOffers];
@@ -115,7 +122,71 @@
 
 -(void)fetchOffers
 {
+    [self cleanCache];
     [self getLastestOffersListHash];
+}
+
+//download all offer's display pages
+-(void)preloadOfferPageCache:(NSDictionary *)objectNotation {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *offerPageURLs = [OffersArrayBuilder getOffersPageURLs:objectNotation];
+    NSString *offerPageCachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
+    NSLog(@"List of URLs to download: %@", offerPageURLs);
+    
+    if (![fileManager fileExistsAtPath:offerPageCachePath])
+    {
+        NSError* error = nil;
+        NSLog(@"Creating directory: %@", offerPageCachePath);
+        if (![fileManager createDirectoryAtPath:offerPageCachePath withIntermediateDirectories:YES attributes:nil error:&error])
+            NSLog(@"Error creating directory: %@", [error description]);
+    }
+    
+    for (NSString *offerPageURL in offerPageURLs) {
+        NSString *offerPageCacheFile = [offerPageCachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",offerPageURL]];
+        NSLog(@"Trying to locate web page from cache: %@",offerPageCacheFile);
+        
+        //Check to see if the file exists at the location
+        if ([[NSFileManager defaultManager] fileExistsAtPath:offerPageCacheFile]) {
+            NSLog(@"Found web page in cache! Skipping download %@",offerPageCacheFile);
+        }
+        else
+        {
+            NSLog(@"Need to download %@", offerPageCacheFile);
+            [self downloadWebPage:offerPageURL toFile:offerPageCacheFile];
+        }
+
+    }
+
+}
+
+-(void)downloadWebPage:(NSString *)offerPageURL toFile:(NSString *)offerPageCachePath {
+    self.precachingOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:[NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, offerPageURL] toFile:offerPageCachePath];
+    
+    [self.precachingOperation addCompletionHandler:^(MKNetworkOperation* completedRequest) {
+        NSLog(@"Web page %@ cached to %@",offerPageURL, offerPageCachePath);
+    }
+    errorHandler:^(MKNetworkOperation *errorOp, NSError* error) {
+        NSLog(@"Can't cache web page: %@",offerPageURL);
+
+    }];
+}
+
+//clear any expired offer pages cache
+- (void)cleanCache
+{
+    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-cacheMaxCacheAge];
+    NSDirectoryEnumerator *fileEnumerator = [[NSFileManager defaultManager] enumeratorAtPath:self.offerPageCachesPath];
+    NSLog(@"Checking for expired offer page cache...");
+    for (NSString *fileName in fileEnumerator)
+    {
+        NSString *filePath = [self.offerPageCachesPath stringByAppendingPathComponent:fileName];
+        NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+        if ([[[attrs fileModificationDate] laterDate:expirationDate] isEqualToDate:expirationDate])
+        {
+            NSLog(@"Deleted %@ cache file, over one week old",filePath);
+            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        }
+    }
 }
 
 #pragma mark - FetchingManagerDelegate
@@ -123,6 +194,9 @@
 -(void)receivedOffersJSON:(NSDictionary *)objectNotation {
     NSArray *offers = [OffersArrayBuilder offersFromJSON:objectNotation];
     NSString *batchID =[OffersArrayBuilder getOffersBatchID:objectNotation];
+    
+    //start pre-caching each offer's url page
+    [self preloadOfferPageCache:objectNotation];
     
     [self.delegate didReceiveOffers:offers withBatchID:batchID];
 }

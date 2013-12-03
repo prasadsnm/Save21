@@ -17,7 +17,10 @@
 
 @property (nonatomic,strong) MKNetworkOperation *flOperation;
 
+@property (nonatomic,strong) MKNetworkOperation *precachingOperation;
+
 @property (nonatomic,strong) NSString *currentOffersListHash;
+
 -(void)fetchOffers;
 
 @end

@@ -326,6 +326,7 @@ static SDImageCache *instance;
         NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
         if ([[[attrs fileModificationDate] laterDate:expirationDate] isEqualToDate:expirationDate])
         {
+            NSLog(@"Deleted %@ cache file, over one week old",filePath);
             [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
         }
     }

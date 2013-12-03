@@ -13,4 +13,6 @@
 + (NSArray *)offersFromJSON:(NSDictionary *)objectNotation;
 
 + (NSString *)getOffersBatchID:(NSDictionary *)objectNotation;
+
++ (NSArray *)getOffersPageURLs:(NSDictionary *)objectNotation;
 @end

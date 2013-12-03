@@ -33,6 +33,21 @@
     return offers;
 }
 
++(NSArray *)getOffersPageURLs:(NSDictionary *)objectNotation {
+    NSMutableArray *offersPageURLs = [[NSMutableArray alloc] init];
+    
+    NSArray *results = [objectNotation valueForKey:@"offers"];
+    
+    for (NSDictionary *offerDic in results) {
+        NSString *offerPageURL;
+        offerPageURL = [offerDic valueForKey:@"offerurl"];
+        
+        [offersPageURLs addObject:offerPageURL];
+    }
+    
+    return offersPageURLs;
+}
+
 + (NSString *)getOffersBatchID:(NSDictionary *)objectNotation {
     NSString *batchID = [objectNotation valueForKey:@"batch_ID"];
     

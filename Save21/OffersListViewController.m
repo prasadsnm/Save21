@@ -15,6 +15,7 @@
 #import "MBProgressHUD.h"
 #import "OfferTableCell.h"
 #import "Reachability.h"
+#import "SDImageCache.h"
 
 static Reachability *_reachability = nil;
 BOOL _reachabilityOn;
@@ -103,6 +104,9 @@ static inline Reachability* defaultReachability () {
     
     _manager = [[FetchingManager alloc] init];
     _manager.delegate = self;
+    
+    //clear the thumbnail and banner images cache(remove everything over one week old)
+    [[SDImageCache sharedImageCache] cleanDisk];
 }
 
 -(void)viewDidAppear:(BOOL)animated {

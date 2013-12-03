@@ -256,12 +256,11 @@
         [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
             //handle a successful 200 response
         }
-                                  errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
-                                      NSLog(@"%@", error);
-                                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-                                      [alert show];
-                                  }];
-        
+        errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+            NSLog(@"%@", error);
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+            [alert show];
+        }];
         
         [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
     }
