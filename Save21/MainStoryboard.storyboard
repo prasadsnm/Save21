@@ -707,7 +707,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="124"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h5V-Vo-hmK">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h5V-Vo-hmK" customClass="UrlImageView">
                                                     <rect key="frame" x="12" y="11" width="75" height="75"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
@@ -1758,7 +1758,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="dI8-jT-r3y"/>
-        <segue reference="HKE-dN-bAc"/>
-        <segue reference="5nX-wx-e7y"/>
+        <segue reference="T6W-eI-2Qd"/>
+        <segue reference="FQM-z9-61l"/>
     </inferredMetricsTieBreakers>
 </document>

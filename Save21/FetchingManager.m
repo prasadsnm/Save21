@@ -143,7 +143,7 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
     
     for (NSString *offerPageURL in offerPageURLs) {
         NSString *offerPageCacheFile = [offerPageCachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",offerPageURL]];
-        NSLog(@"Trying to locate web page from cache: %@",offerPageCacheFile);
+        NSLog(@"Trying to locate web page from cache: %@",offerPageURL);
         
         //Check to see if the file exists at the location
         if ([[NSFileManager defaultManager] fileExistsAtPath:offerPageCacheFile]) {
