@@ -129,15 +129,13 @@ static inline Reachability* defaultReachability () {
     [_manager fetchOffers];
 }
 
-- (void)didReceiveOffers:(NSArray *)offers withBatchID:(NSString *)batchID
+- (void)didReceiveOffers:(NSArray *)offers
 {
     
     //[self removeNoInternetWarning];
     //connected = YES;
     
-    NSLog(@"Got offer batch hash: %@",batchID);
-    
-    offersBox.offersArray = offers;
+    [offersBox initializeOffersList:offers];
     
     arrayOfBannersImageURLs = nil;
     arrayOfBannersTitles = nil;
@@ -180,7 +178,7 @@ static inline Reachability* defaultReachability () {
     //});
 }
 
--(void)failedToReceiveOffers {
+-(void)failedToReceiveOffersWithError:(NSError *)error {
     [self showNoInternetWarning];
     connected = NO;
     
@@ -284,15 +282,15 @@ static inline Reachability* defaultReachability () {
     
     cell.nameLabel.text = currentOffer.name;
 	cell.updateLabel.text = currentOffer.description;
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",[currentOffer.rebate_amount floatValue]];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
     
-    if ([currentOffer.total_offered intValue] == -1)
+    if (currentOffer.total_offered == -1)
         cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
     else {
-        if ( ( [currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] ) < 1 )
+        if ( ( currentOffer.total_offered - currentOffer.num_of_valid_claims ) < 1 )
             cell.dateLabel.text = @"SOLD OUT";
         else
-            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] )];
+            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims )];
     }
     
     NSString *thumbnail_URL = [NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL];

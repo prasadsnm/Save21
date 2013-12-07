@@ -7,7 +7,7 @@
 //
 
 #import "UploadViewController.h"
-
+#import "Save21AppDelegate.h"
 #import "singleOffer.h"
 #import "keysAndUrls.h"
 #import "ImagesBox.h"
@@ -137,15 +137,15 @@
     
     cell.nameLabel.text = currentOffer.name;
 	cell.updateLabel.text = currentOffer.description;
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",[currentOffer.rebate_amount floatValue]];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
     
-    if ([currentOffer.total_offered intValue] == -1)
+    if (currentOffer.total_offered == -1)
         cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
     else {
-        if ( ([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] ) < 1 )
+        if ( (currentOffer.total_offered - currentOffer.num_of_valid_claims ) < 1 )
             cell.dateLabel.text = @"SOLD OUT";
         else
-            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",([currentOffer.total_offered intValue] - [currentOffer.num_of_valid_claims intValue] )];
+            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims )];
     }
     
     //draw check mark on selected cell
@@ -186,7 +186,7 @@
 
 -(void)requestReceiptID {
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[PFUser currentUser].email, @"user_email", @"1", @"upload_receipt", nil];
-    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
+    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -202,7 +202,7 @@
          [alert show];
      }];
     
-    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
 }
 
 -(void)uploadImageBox {
@@ -213,7 +213,7 @@
                                        self.currentReceiptID, @"receiptID",
                                        [NSString stringWithFormat: @"%lu", (unsigned long)anotherBox.imageArray.count],@"num_of_photos",
                                        nil];
-    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
+    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
     
     NSLog(@"imagebox has %lu images",(unsigned long)anotherBox.imageArray.count);
 
@@ -245,13 +245,13 @@
         self.HUD.progress = progress;
     }];
     
-    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
 }
 
 -(void)addTo_receipts_and_offers_table {
     for (NSNumber* key in self.DictionaryOfSelectedOfferIDs) {
         NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[key stringValue], @"offerID", self.currentReceiptID, @"receiptID", nil];
-        self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+        self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path:WEB_API_FILE];
         
         [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
             //handle a successful 200 response
@@ -262,7 +262,7 @@
             [alert show];
         }];
         
-        [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+        [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
     }
 }
 

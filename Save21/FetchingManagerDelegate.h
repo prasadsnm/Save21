@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol FetchingManagerDelegate
+@protocol FetchingManagerDelegate <NSObject>
 
-- (void)didReceiveOffers:(NSArray *)offers withBatchID:(NSString *)batchID;
-- (void)failedToReceiveOffers;
+- (void)didReceiveOffers:(NSArray *)offers;
+- (void)failedToReceiveOffersWithError: (NSError *)error;
 
 @end

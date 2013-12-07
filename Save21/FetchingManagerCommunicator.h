@@ -8,7 +8,7 @@
 
 #import "MKNetworkEngine.h"
 
-@interface fileUploadEngine : MKNetworkEngine
+@interface FetchingManagerCommunicator : MKNetworkEngine
 
 -(MKNetworkOperation *) postDataToServer:(NSMutableDictionary *)params path:(NSString *)path;
 

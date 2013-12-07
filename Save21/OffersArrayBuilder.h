@@ -10,9 +10,14 @@
 
 @interface OffersArrayBuilder : NSObject
 
-+ (NSArray *)offersFromJSON:(NSDictionary *)objectNotation;
++ (NSArray *)offersFromJSON:(NSDictionary *)objectNotation error: (NSError **)error;
 
-+ (NSString *)getOffersBatchID:(NSDictionary *)objectNotation;
++ (NSArray *)getOffersPageURLs:(NSDictionary *)objectNotation error: (NSError **)error;
 
-+ (NSArray *)getOffersPageURLs:(NSDictionary *)objectNotation;
 @end
+
+extern NSString *OffersArrayBuilderErrorDomain;
+
+enum {
+    OffersArrayInvalidJSONError,
+};

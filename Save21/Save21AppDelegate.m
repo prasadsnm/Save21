@@ -9,9 +9,10 @@
 #import "Save21AppDelegate.h"
 #import <Parse/Parse.h>
 #import "keysAndUrls.h"
+#import "FetchingManagerCommunicator.h"
 
 @implementation Save21AppDelegate
-@synthesize flUploadEngine = _flUploadEngine;
+@synthesize communicator = _communicator;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -27,7 +28,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
                                                            darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
     
-    self.flUploadEngine = [[fileUploadEngine alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
+    self.communicator = [[FetchingManagerCommunicator alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
     
     return YES;
 }

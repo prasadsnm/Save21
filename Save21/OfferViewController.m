@@ -7,6 +7,7 @@
 //
 
 #import "OfferViewController.h"
+#import "Save21AppDelegate.h"
 #import "Reachability.h"
 #import "MBProgressHUD.h"
 #import "keysAndUrls.h"
@@ -120,7 +121,7 @@ static inline Reachability* defaultReachability () {
 -(void)downloadWebPage {
     [self.HUD show:YES];
     
-    self.flOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:self.urlFile toFile:self.cacheFile];
+    self.flOperation = [ApplicationDelegate.communicator downloadFileFrom:self.urlFile toFile:self.cacheFile];
     
     [self.flOperation onDownloadProgressChanged:^(double progress) {
         self.HUD.progress = progress;

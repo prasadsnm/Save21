@@ -11,11 +11,21 @@
 
 @implementation OffersArrayBuilder
 
-+ (NSArray *)offersFromJSON:(NSDictionary *)objectNotation
++ (NSArray *)offersFromJSON:(NSDictionary *)objectNotation error: (NSError **)error;
 {
-    NSMutableArray *offers = [[NSMutableArray alloc] init];
+    NSParameterAssert(objectNotation != nil);
     
     NSArray *results = [objectNotation valueForKey:@"offers"];
+    
+    if (results == nil) {
+        if (error != NULL) {
+            *error = [NSError errorWithDomain:OffersArrayBuilderErrorDomain code: OffersArrayInvalidJSONError userInfo:nil];
+        }
+        return nil;
+    }
+    
+    NSMutableArray *offers = [[NSMutableArray alloc] init];
+    
     NSLog(@"Count %d", results.count);
     
     for (NSDictionary *offerDic in results) {
@@ -33,10 +43,20 @@
     return offers;
 }
 
-+(NSArray *)getOffersPageURLs:(NSDictionary *)objectNotation {
-    NSMutableArray *offersPageURLs = [[NSMutableArray alloc] init];
-    
++ (NSArray *)getOffersPageURLs:(NSDictionary *)objectNotation error: (NSError **)error;
+{
+    NSParameterAssert(objectNotation != nil);
+
     NSArray *results = [objectNotation valueForKey:@"offers"];
+    
+    if (results == nil) {
+        if (error != NULL) {
+            *error = [NSError errorWithDomain:OffersArrayBuilderErrorDomain code: OffersArrayInvalidJSONError userInfo:nil];
+        }
+        return nil;
+    }
+    
+    NSMutableArray *offersPageURLs = [[NSMutableArray alloc] init];
     
     for (NSDictionary *offerDic in results) {
         NSString *offerPageURL;
@@ -48,9 +68,6 @@
     return offersPageURLs;
 }
 
-+ (NSString *)getOffersBatchID:(NSDictionary *)objectNotation {
-    NSString *batchID = [objectNotation valueForKey:@"batch_ID"];
-    
-    return batchID;
-}
 @end
+
+NSString *OffersArrayBuilderErrorDomain = @"OffersArrayBuilderErrorDomain";

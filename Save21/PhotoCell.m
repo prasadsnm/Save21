@@ -40,6 +40,8 @@
 }
 
 // INSERT CELL ANIMATION SNIPPET HERE
+// Not used, meant for going to a deletion mode
+/*
 - (void)startQuivering
 {
     CABasicAnimation *quiverAnim = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
@@ -61,4 +63,5 @@
     CALayer *layer = self.layer;
     [layer removeAnimationForKey:@"quivering"];
 }
+ */
 @end

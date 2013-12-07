@@ -97,7 +97,7 @@ enum AboutMe {
     
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_account_info",
                                        [PFUser currentUser].email, @"user_email", nil];
-    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
+    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -122,10 +122,11 @@ enum AboutMe {
          NSLog(@"%@", error);
          UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to refresh user account info try again." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
          [alert show];
+         
          [HUD hide:YES];
          
      }];
-    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
 }
 
 -(void)request_cheque {
@@ -135,7 +136,7 @@ enum AboutMe {
     
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_cheque",
                                        [PFUser currentUser].email, @"user_email", nil];
-    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path:WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -159,7 +160,7 @@ enum AboutMe {
          [HUD hide:YES];
          
      }];
-    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -238,13 +239,16 @@ enum AboutMe {
         case SavingsSection: {
             switch (row) {
                 case ReceiptsPending:
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d",self.num_of_pending_claims];
+                    if (self.num_of_pending_claims != 0)
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%d",self.num_of_pending_claims];
                     break;
                 case AccountBalance:
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.account_balance];
+                    if (self.account_balance != 0)
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.account_balance];
                     break;
                 case TotalSavings:
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.total_savings];
+                    if (self.total_savings != 0)
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.total_savings];
                     break;
                     
                 default:

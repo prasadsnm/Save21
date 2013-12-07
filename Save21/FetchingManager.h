@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "FetchingManagerDelegate.h"
+#import "FetchingManagerCommunicator.h"
 
 @class OffersFetcher;
 
@@ -15,12 +16,16 @@
 
 @property (weak, nonatomic) id<FetchingManagerDelegate> delegate;
 
-@property (nonatomic,strong) MKNetworkOperation *flOperation;
+@property (weak, nonatomic) FetchingManagerCommunicator *communicatorEngine;
 
-@property (nonatomic,strong) MKNetworkOperation *precachingOperation;
-
-@property (nonatomic,strong) NSString *currentOffersListHash;
-
+//fetch the lastest offer's JSON file, return the parsed dictionary to the delegate
 -(void)fetchOffers;
 
 @end
+
+extern NSString *FetchingManagerError;
+
+enum {
+    FetchingManagerErrorOffersToFetchCode,
+    FetchingManagerErrorNoInternetCode,
+};

@@ -19,15 +19,21 @@
         if(!single)
         {
             single = [[OffersList alloc] init];
-            
+            single.offersArray = [[NSArray alloc] init];
         }
         
     }
     return single;
 }
 
+-(NSArray *)offersArray {
+    if (_offersArray == nil)
+        _offersArray = [[NSArray alloc] init];
+    return _offersArray;
+}
+
 -(void)initializeOffersList:(NSArray *)receivedOffers {
-    if (!receivedOffers)
+    if (receivedOffers)
         self.offersArray = receivedOffers;
 }
 

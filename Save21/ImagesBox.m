@@ -12,6 +12,7 @@
 @end
 
 @implementation ImagesBox
+
 @synthesize imageArray = _imageArray;
 
 +(ImagesBox *)imageBox {
@@ -22,7 +23,7 @@
         if(!single)
         {
             single = [[ImagesBox alloc] init];
-            
+            single.imageArray = [[NSMutableArray alloc] init];
         }
         
     }
@@ -30,7 +31,8 @@
 }
 
 -(NSMutableArray *)imageArray {
-    if (_imageArray == nil) _imageArray = [[NSMutableArray alloc] init];
+    if (_imageArray == nil)
+        _imageArray = [[NSMutableArray alloc] init];
     return _imageArray;
 }
 

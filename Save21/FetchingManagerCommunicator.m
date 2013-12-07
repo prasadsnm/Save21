@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
-#import "fileUploadEngine.h"
+#import "FetchingManagerCommunicator.h"
 
-@implementation fileUploadEngine
+@implementation FetchingManagerCommunicator
 
 -(MKNetworkOperation *)postDataToServer:(NSMutableDictionary *)params path:(NSString *)path {
     MKNetworkOperation *op = [self operationWithPath:path params:params httpMethod:@"POST" ssl:NO];

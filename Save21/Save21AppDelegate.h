@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "fileUploadEngine.h"
+#import "FetchingManagerCommunicator.h"
 
-#define ApplicationDelegate ((Save21AppDelegate *)[UIApplication sharedApplication].delegate)
+#define ApplicationDelegate ((Save21AppDelegate *)[[UIApplication sharedApplication] delegate])
 
 @interface Save21AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) fileUploadEngine *flUploadEngine;
+@property (strong, nonatomic) FetchingManagerCommunicator *communicator;
 
 @end

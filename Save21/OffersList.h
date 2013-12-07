@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface OffersList : NSObject
+
 @property (nonatomic, strong) NSArray *offersArray;
 
 -(void)initializeOffersList:(NSArray *)receivedOffers;
 
 +(OffersList *)offersList;
+
 @end

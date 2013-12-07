@@ -18,13 +18,30 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
 @property (nonatomic,strong) NSString *cacheFile;
 @property (nonatomic,strong) NSUserDefaults *defaults;
 @property (nonatomic,strong) NSString *offerPageCachesPath;
+@property (nonatomic,strong) MKNetworkOperation *flOperation;
+@property (nonatomic,strong) MKNetworkOperation *precachingOperation;
+@property (nonatomic,strong) NSString *currentOffersListHash;
 
 @end
 
 @implementation FetchingManager
+@synthesize communicatorEngine = _communicatorEngine;
+
+@synthesize cachesPath = _cachesPath;
+@synthesize cacheFile = _cacheFile;
+@synthesize offerPageCachesPath = _offerPageCachesPath;
+@synthesize delegate = _delegate;
 @synthesize flOperation = _flOperation;
 @synthesize precachingOperation = _precachingOperation;
 @synthesize defaults = _defaults;
+
+- (void)setDelegate:(id<FetchingManagerDelegate>)newDelegate {
+    if (newDelegate && ![newDelegate conformsToProtocol: @protocol(FetchingManagerDelegate)]) {
+        [[NSException exceptionWithName: NSInvalidArgumentException reason:
+          @"Delegate object does not conform to the delegate protocol" userInfo: nil] raise];
+    }
+    _delegate = newDelegate;
+}
 
 - (id)init
 {
@@ -33,6 +50,7 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
         self.cachesPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
         self.cacheFile = [self.cachesPath stringByAppendingPathComponent:@"/offers-cache-file.sav"];
         self.offerPageCachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
+        self.communicatorEngine = ApplicationDelegate.communicator;
     }
     return self;
 }
@@ -42,7 +60,7 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
     self.defaults = [NSUserDefaults standardUserDefaults];
     
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_offers_hash", nil];
-    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path:WEB_API_FILE];
+    self.flOperation = [self.communicatorEngine postDataToServer:postParams path:WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
@@ -65,12 +83,12 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
         [weakSelf receivedOffersJSON:responseDict];
     }];
     
-    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+    [self.communicatorEngine enqueueOperation:self.flOperation];
 }
 
 -(void)downloadOffers {
     NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"request_offers", nil];
-    self.flOperation = [ApplicationDelegate.flUploadEngine postDataToServer:postParams path: WEB_API_FILE];
+    self.flOperation = [self.communicatorEngine postDataToServer:postParams path: WEB_API_FILE];
     
     __weak typeof(self) weakSelf = self;
     [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation)
@@ -91,9 +109,10 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
          
      } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
          NSLog(@"%@", error);
-         [weakSelf.delegate failedToReceiveOffers];
+         NSError *reportError = [NSError errorWithDomain:FetchingManagerError code: FetchingManagerErrorNoInternetCode userInfo:nil];
+         [weakSelf.delegate failedToReceiveOffersWithError:reportError];
      }];
-    [ApplicationDelegate.flUploadEngine enqueueOperation:self.flOperation];
+    [self.communicatorEngine enqueueOperation:self.flOperation];
 }
 
 -(void)checkOfferCache {
@@ -128,8 +147,14 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
 
 //download all offer's display pages
 -(void)preloadOfferPageCache:(NSDictionary *)objectNotation {
+    NSError *error = nil;
+    NSArray *offerPageURLs = [OffersArrayBuilder getOffersPageURLs:objectNotation error:&error];
+    
+    if (!offerPageURLs) {
+        [self tellDelegateAboutQuestionSearchError: error];
+    }
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *offerPageURLs = [OffersArrayBuilder getOffersPageURLs:objectNotation];
     NSString *offerPageCachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
     NSLog(@"List of URLs to download: %@", offerPageURLs);
     
@@ -159,8 +184,9 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
 
 }
 
+//download a offer page to cache
 -(void)downloadWebPage:(NSString *)offerPageURL toFile:(NSString *)offerPageCachePath {
-    self.precachingOperation = [ApplicationDelegate.flUploadEngine downloadFileFrom:[NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, offerPageURL] toFile:offerPageCachePath];
+    self.precachingOperation = [self.communicatorEngine downloadFileFrom:[NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, offerPageURL] toFile:offerPageCachePath];
     
     [self.precachingOperation addCompletionHandler:^(MKNetworkOperation* completedRequest) {
         NSLog(@"Web page %@ cached to %@",offerPageURL, offerPageCachePath);
@@ -192,13 +218,29 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
 #pragma mark - FetchingManagerDelegate
 
 -(void)receivedOffersJSON:(NSDictionary *)objectNotation {
-    NSArray *offers = [OffersArrayBuilder offersFromJSON:objectNotation];
-    NSString *batchID =[OffersArrayBuilder getOffersBatchID:objectNotation];
+    NSError *error = nil;
+    NSArray *offers = [OffersArrayBuilder offersFromJSON:objectNotation error:&error];
+    
+    if (!offers) {
+        [self tellDelegateAboutQuestionSearchError: error];
+    }
     
     //start pre-caching each offer's url page
     [self preloadOfferPageCache:objectNotation];
     
-    [self.delegate didReceiveOffers:offers withBatchID:batchID];
+    [self.delegate didReceiveOffers:offers];
 }
+
+- (void)tellDelegateAboutQuestionSearchError:(NSError *)underlyingError {
+    NSDictionary *errorInfo = nil;
+    if (underlyingError) {
+        errorInfo = [NSDictionary dictionaryWithObject: underlyingError forKey: NSUnderlyingErrorKey];
+    }
+    NSError *reportableError = [NSError errorWithDomain: FetchingManagerError code: FetchingManagerErrorOffersToFetchCode userInfo: errorInfo];
+    
+    [self.delegate failedToReceiveOffersWithError:reportableError];
+}
+
 @end
 
+NSString *FetchingManagerError = @"FetchingManagerError";

@@ -9,15 +9,15 @@
 #import <Foundation/Foundation.h>
 
 @interface singleOffer : NSObject
-@property (strong, nonatomic) NSString *name;
-@property (strong, nonatomic) NSString *description;
-@property (strong, nonatomic) NSString *properties;
-@property (strong, nonatomic) NSString *pictureURL;
-@property (strong, nonatomic) NSString *offerid;
-@property (strong, nonatomic) NSString *offerurl;
-@property (strong, nonatomic) NSNumber *total_offered;
-@property (strong, nonatomic) NSNumber *num_of_valid_claims;
-@property (strong, nonatomic) NSNumber *rebate_amount;
-@property (strong, nonatomic) NSString *bannerPictureURL;
+@property (copy, nonatomic) NSString *name;
+@property (copy, nonatomic) NSString *description;
+@property (copy, nonatomic) NSString *properties;
+@property (copy, nonatomic) NSString *pictureURL;
+@property (copy, nonatomic) NSString *offerid;
+@property (copy, nonatomic) NSString *offerurl;
+@property NSInteger total_offered;
+@property NSInteger num_of_valid_claims;
+@property float rebate_amount;
+@property (copy, nonatomic) NSString *bannerPictureURL;
 
 @end
