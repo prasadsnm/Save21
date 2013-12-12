@@ -18,6 +18,7 @@ The management software will not be posted here and will be demostrated in perso
 Technical Details
 -------------
 The app demonstrates the requirements of a typical iOS app: a native iOS application built in xCode, a web service API that feeds and fetches data from the app to web server, a back-end SQL database for storing flexible contents, and the use of a commercial Backend Service provider such as Parse for managing secure user info. The web API is written in a RESTful manner using PHP and HTTP methods (e.g., GET, PUT, POST, or DELETE).
+The app also uses persistent storage to store cached images, offer list, offer pages, and etc.
 
 
 Testing Environment
@@ -25,9 +26,6 @@ Testing Environment
 This demo is aimed at any iPhone with retina display, running on iOS 7+. Will support IOS 6 in the future. 
 The project can be opened and compiled using xCode 5.
 
-Further Improvements
-------------
-The program currently does not use any form of caching for the offer contents. In the future, I shall add caching to improve user experience.
 
 Licensing
 ---------
