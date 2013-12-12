@@ -245,7 +245,7 @@ enum AboutMe {
                     cell.textLabel.text = [NSString stringWithFormat:@"%@", [PFUser currentUser].email];
                     break;
                 case UserCity:
-                    cell.textLabel.text = [NSString stringWithFormat:@"%@", [[PFUser currentUser] objectForKey:@"City"]];
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@", [[PFUser currentUser] objectForKey:@"city"]];
                 default:
                     break;
             }
