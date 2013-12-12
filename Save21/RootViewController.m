@@ -6,16 +6,17 @@
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
-#import "Leon_Austin_PrototypeViewController.h"
+#import "RootViewController.h"
 #import <Parse/Parse.h>
+#import "SDImageCache.h"
 
-@interface Leon_Austin_PrototypeViewController ()
+@interface RootViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageLogo;
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activityIndicator;
 @end
 
-@implementation Leon_Austin_PrototypeViewController
+@implementation RootViewController
 @synthesize activityIndicator = _activityIndicator;
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -36,13 +37,19 @@
     
     [self.activityIndicator startAnimating];
     
-    [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(aTime) userInfo:nil repeats:NO];
     
+    //clear the thumbnail and banner images cache(remove everything over one week old)
+    [[SDImageCache sharedImageCache] cleanDisk];
+    
+    //goToNextView
+    [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(goToNextView) userInfo:nil repeats:NO];
 }
 
--(void)aTime
+-(void)goToNextView
 {
     PFUser *currentUser = [PFUser currentUser];
+    [self.activityIndicator stopAnimating];
+    
     if (currentUser) {
         // do stuff with the user
         [self performSegueWithIdentifier:@"splashToOffers" sender:self];
@@ -50,13 +57,12 @@
         // show the signup or login screen
         [self performSegueWithIdentifier:@"showSignIn" sender:self];
     }
-    [self.activityIndicator stopAnimating];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
+    //Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

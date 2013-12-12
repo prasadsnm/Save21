@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="-554" y="-93"/>
         </scene>
-        <!--Leon Austin Prototype View Controller - Splash Screen-->
+        <!--Root View Controller - Splash Screen-->
         <scene sceneID="5">
             <objects>
-                <viewController title="Splash Screen" id="2" customClass="Leon_Austin_PrototypeViewController" sceneMemberID="viewController">
+                <viewController title="Splash Screen" id="2" customClass="RootViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mdI-bH-kMr"/>
                         <viewControllerLayoutGuide type="bottom" id="jRS-l2-Rf5"/>

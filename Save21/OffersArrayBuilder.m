@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
+//TESTED
+
 #import "OffersArrayBuilder.h"
 #import "singleOffer.h"
 

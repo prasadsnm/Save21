@@ -9,11 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 
-@interface CreateAccountViewController : UITableViewController <PFSignUpViewControllerDelegate,UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface CreateAccountViewController : UITableViewController <PFSignUpViewControllerDelegate,UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate,FetchingManagerCommunicatorDelegate>
 
 @property (strong, nonatomic) NSArray *genderChoices;
 @property (strong, nonatomic) NSArray *cityChoices;
-
-@property (nonatomic,strong) MKNetworkOperation *flOperation;
 
 @end

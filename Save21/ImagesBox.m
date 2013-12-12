@@ -6,10 +6,9 @@
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
-#import "ImagesBox.h"
-@interface ImagesBox()
+//TESTED
 
-@end
+#import "ImagesBox.h"
 
 @implementation ImagesBox
 

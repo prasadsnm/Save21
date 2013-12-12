@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
+//TESTED
+
 #import <Foundation/Foundation.h>
 
 @interface ImagesBox : NSObject

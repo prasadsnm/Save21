@@ -7,6 +7,7 @@
 //
 
 #import "FetchingManager.h"
+#import "FetchingManagerCommunicator.h"
 #import "OffersArrayBuilder.h"
 #import "keysAndUrls.h"
 
@@ -18,22 +19,19 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
 @property (nonatomic,strong) NSString *cacheFile;
 @property (nonatomic,strong) NSUserDefaults *defaults;
 @property (nonatomic,strong) NSString *offerPageCachesPath;
-@property (nonatomic,strong) MKNetworkOperation *flOperation;
-@property (nonatomic,strong) MKNetworkOperation *precachingOperation;
 @property (nonatomic,strong) NSString *currentOffersListHash;
 
 @end
 
 @implementation FetchingManager
-@synthesize communicatorEngine = _communicatorEngine;
-
 @synthesize cachesPath = _cachesPath;
 @synthesize cacheFile = _cacheFile;
 @synthesize offerPageCachesPath = _offerPageCachesPath;
 @synthesize delegate = _delegate;
-@synthesize flOperation = _flOperation;
-@synthesize precachingOperation = _precachingOperation;
 @synthesize defaults = _defaults;
+@synthesize communicator = _communicator;
+
+#pragma mark - Its own functions
 
 - (void)setDelegate:(id<FetchingManagerDelegate>)newDelegate {
     if (newDelegate && ![newDelegate conformsToProtocol: @protocol(FetchingManagerDelegate)]) {
@@ -50,71 +48,39 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
         self.cachesPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
         self.cacheFile = [self.cachesPath stringByAppendingPathComponent:@"/offers-cache-file.sav"];
         self.offerPageCachesPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"offer_page_cache"];
-        self.communicatorEngine = ApplicationDelegate.communicator;
+        self.defaults = [NSUserDefaults standardUserDefaults];
+        self.communicator = ApplicationDelegate.communicator;
     }
     return self;
 }
 
-//get the lastest offer lists hash, so we can see if we already have the lastest list in cache, or need to download the new list
--(void)getLastestOffersListHash {
-    self.defaults = [NSUserDefaults standardUserDefaults];
+//start here
+-(void)fetchOffers
+{
+    //for some reason, if this function is called the second time, the communicatorEngine's delegate would become nil.
+    //So must set it each time.
+    self.communicator.delegate = self;
     
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_offers_hash", nil];
-    self.flOperation = [self.communicatorEngine postDataToServer:postParams path:WEB_API_FILE];
+    //first clean the cache of anything over 1 week old
+    [self cleanOfferPageCache];
     
-    __weak typeof(self) weakSelf = self;
-    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
-        NSLog(@"Requesting offer list hash success!");
-        //handle a successful 200 response
-        NSDictionary *responseDict = [operation responseJSON];
-        NSLog(@"Requested current offer list hash: %@",[responseDict objectForKey:@"batch_ID"]);
-        weakSelf.currentOffersListHash = [responseDict objectForKey:@"batch_ID"];
-        
-        [weakSelf checkOfferCache];
-    }
-    errorHandler:^(MKNetworkOperation *completedOperation, NSError *error)
-    {
-         NSLog(@"Requesting offer list hash failed! Read offers from cache instead.");
-        //load offers from cache
-        //get the responseDict from cache file
-        NSDictionary *responseDict = [[NSDictionary alloc] initWithContentsOfFile:weakSelf.cacheFile];
-        
-        //send the json file to offer table builder
-        [weakSelf receivedOffersJSON:responseDict];
-    }];
-    
-    [self.communicatorEngine enqueueOperation:self.flOperation];
+    //start by checking the lastest offers list's hash ID, see if need updating
+    [self checkLastestOffersListHash];
 }
 
+//tell the communicator to fetch the lastest offer lists hash, so we can see if we already have the lastest list in cache, or need to download the new list
+-(void)checkLastestOffersListHash {
+    
+    [self.communicator getLastestOffersListHash];
+}
+
+//we need to download the offer list from server
 -(void)downloadOffers {
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"request_offers", nil];
-    self.flOperation = [self.communicatorEngine postDataToServer:postParams path: WEB_API_FILE];
-    
-    __weak typeof(self) weakSelf = self;
-    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation)
-     {
-         NSLog(@"Offer List request success!");
-         //handle a successful 200 response
-         NSDictionary *responseDict = [operation responseJSON];
-         //NSLog(@"%@",[responseDict description]);
-         
-         //send the json file to offer table builder
-         [weakSelf receivedOffersJSON:responseDict];
-         
-         //save the downloaded json to disk cache and save its hash to UserDefaults
-         NSLog(@"Offer list cached to file: %@",weakSelf.cacheFile);
-         [responseDict writeToFile:weakSelf.cacheFile atomically:NO];
-         [weakSelf.defaults setValue:weakSelf.currentOffersListHash forKey:@"lastestOfferListHash"];
-         [weakSelf.defaults synchronize];
-         
-     } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
-         NSLog(@"%@", error);
-         NSError *reportError = [NSError errorWithDomain:FetchingManagerError code: FetchingManagerErrorNoInternetCode userInfo:nil];
-         [weakSelf.delegate failedToReceiveOffersWithError:reportError];
-     }];
-    [self.communicatorEngine enqueueOperation:self.flOperation];
+    [self.communicator getLastestOffersList];
 }
 
+//check to see if we already have the latest offers cached by looking at the hash ID
+//if we do, then no need to download the offers list again, just read from cache
 -(void)checkOfferCache {
    NSFileManager *fileManager = [NSFileManager defaultManager];
     //see if defaults contains the hash for the cached file AND the cached file exists
@@ -124,9 +90,9 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
             NSLog(@"The cached offer list is up to date! Proceed by loading from cache.");
             //get the responseDict from cache file
             NSDictionary *responseDict = [[NSDictionary alloc] initWithContentsOfFile:self.cacheFile];
+            
             //send the json file to offer table builder
             [self receivedOffersJSON:responseDict];
-            
         } else {
             NSLog(@"The cached offer list's hash is different from servers! Proceed by downloading from server.");
             [self downloadOffers];
@@ -134,15 +100,8 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
     } else {
         NSLog(@"The cached offers list file doesn't exist or the offers list hash isn't in userdefaults, proceed by downloading from server.");
         
-        //download the newest offer list to cache
         [self downloadOffers];
     }
-}
-
--(void)fetchOffers
-{
-    [self cleanCache];
-    [self getLastestOffersListHash];
 }
 
 //download all offer's display pages
@@ -151,7 +110,7 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
     NSArray *offerPageURLs = [OffersArrayBuilder getOffersPageURLs:objectNotation error:&error];
     
     if (!offerPageURLs) {
-        [self tellDelegateAboutQuestionSearchError: error];
+        [self tellDelegateAboutOfferFetchError: error];
     }
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -172,7 +131,7 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
         
         //Check to see if the file exists at the location
         if ([[NSFileManager defaultManager] fileExistsAtPath:offerPageCacheFile]) {
-            NSLog(@"Found web page in cache! Skipping download %@",offerPageCacheFile);
+            NSLog(@"Found web page in cache! Skipping download");
         }
         else
         {
@@ -186,19 +145,11 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
 
 //download a offer page to cache
 -(void)downloadWebPage:(NSString *)offerPageURL toFile:(NSString *)offerPageCachePath {
-    self.precachingOperation = [self.communicatorEngine downloadFileFrom:[NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, offerPageURL] toFile:offerPageCachePath];
-    
-    [self.precachingOperation addCompletionHandler:^(MKNetworkOperation* completedRequest) {
-        NSLog(@"Web page %@ cached to %@",offerPageURL, offerPageCachePath);
-    }
-    errorHandler:^(MKNetworkOperation *errorOp, NSError* error) {
-        NSLog(@"Can't cache web page: %@",offerPageURL);
-
-    }];
+    [self.communicator requestToDownloadFileFrom:[NSString stringWithFormat:@"%@%@",OFFER_PAGES_URL, offerPageURL] toFile:offerPageCachePath];
 }
 
 //clear any expired offer pages cache
-- (void)cleanCache
+- (void)cleanOfferPageCache
 {
     NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-cacheMaxCacheAge];
     NSDirectoryEnumerator *fileEnumerator = [[NSFileManager defaultManager] enumeratorAtPath:self.offerPageCachesPath];
@@ -215,28 +166,78 @@ static NSInteger cacheMaxCacheAge = 60*60*24*7; // 1 week
     }
 }
 
-#pragma mark - FetchingManagerDelegate
+#pragma mark - From FetchingManagerCommunicatorDelegate
 
+-(void)receivedOffersListHashString:(NSString *)hashString {
+    self.currentOffersListHash = hashString;
+    
+    //if we already have the latest offers cached
+    [self checkOfferCache];
+}
+
+//this happens if the user is not connected to internet
+-(void)fetchingLatestOffersListHashFailedWithError:(NSError *)error {
+    NSLog(@"Requesting offer list hash failed! Read offers from cache instead.");
+    
+    //Read offers from cache
+    NSDictionary *responseDict = [[NSDictionary alloc] initWithContentsOfFile:self.cacheFile];
+    
+    //send the json file to offer table builder
+    [self receivedOffersJSON:responseDict];
+    
+}
+
+-(void)receivedOffersListResponseDict:(NSDictionary *)responseDict {
+    //send the offer JSON file to offer table builder
+    [self receivedOffersJSON:responseDict];
+}
+
+//this happens only if the internet cut off immediately after successfully
+//fetching the new offers hash ID from server and needs to update offers list
+-(void)fetchingLastestOffersFailedWithError:(NSError *)error {
+    NSLog(@"Requesting offer list failed!");
+    NSError *reportError = [NSError errorWithDomain:FetchingManagerError code: FetchingManagerErrorOffersFetchCode userInfo:nil];
+    [self.delegate failedToReceiveOffersWithError:reportError];
+}
+
+-(void)downloadFileSuccess:(NSString *)fileName {
+    NSLog(@"Offer page %@ downloaded",fileName);
+}
+
+-(void)downloadFileFailedWithError:(NSError *)error file:(NSString *)fileName {
+    NSLog(@"Offer page %@ failed to download",fileName);
+}
+
+#pragma mark - To its delegate
+//send the offers to its delegate
 -(void)receivedOffersJSON:(NSDictionary *)objectNotation {
     NSError *error = nil;
     NSArray *offers = [OffersArrayBuilder offersFromJSON:objectNotation error:&error];
-    
+    //no offers exist in the JSON file
     if (!offers) {
-        [self tellDelegateAboutQuestionSearchError: error];
+        [self tellDelegateAboutOfferFetchError: error];
+        return;
     }
+    
+    //save the downloaded json to disk cache and save its hash to UserDefaults
+    NSLog(@"Offer list cached to file: %@",self.cacheFile);
+    [objectNotation writeToFile:self.cacheFile atomically:NO];
+    
+    [self.defaults setValue:self.currentOffersListHash forKey:@"lastestOfferListHash"];
+    [self.defaults synchronize];
     
     //start pre-caching each offer's url page
     [self preloadOfferPageCache:objectNotation];
-    
+    NSLog(@"Sent offers list to delegate");
     [self.delegate didReceiveOffers:offers];
 }
-
-- (void)tellDelegateAboutQuestionSearchError:(NSError *)underlyingError {
+//tell its delegate about the error regarding fetching offers
+- (void)tellDelegateAboutOfferFetchError:(NSError *)underlyingError {
     NSDictionary *errorInfo = nil;
     if (underlyingError) {
         errorInfo = [NSDictionary dictionaryWithObject: underlyingError forKey: NSUnderlyingErrorKey];
     }
-    NSError *reportableError = [NSError errorWithDomain: FetchingManagerError code: FetchingManagerErrorOffersToFetchCode userInfo: errorInfo];
+    NSError *reportableError = [NSError errorWithDomain: FetchingManagerError code: FetchingManagerErrorOffersFetchCode userInfo: errorInfo];
     
     [self.delegate failedToReceiveOffersWithError:reportableError];
 }

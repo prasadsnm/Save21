@@ -11,4 +11,8 @@
 
 @interface MockFetchingManagerDelegate : NSObject <FetchingManagerDelegate>
 
+@property (strong) NSArray *fetchedOffers;
+
+@property (strong) NSError *fetchError;
+
 @end

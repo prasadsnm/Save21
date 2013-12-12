@@ -8,7 +8,6 @@
 
 #import "CreateAccountViewController.h"
 #import "keysAndUrls.h"
-#import "Save21AppDelegate.h"
 
 @interface CreateAccountViewController ()
 
@@ -20,12 +19,12 @@
 @property (weak, nonatomic) IBOutlet UITextField *genderField;
 @property (weak, nonatomic) IBOutlet UITextField *cityField;
 @property (weak, nonatomic) IBOutlet UITextField *postalField;
-
 @property (strong, nonatomic) UIToolbar *mypickerToolbar;
 @property (strong, nonatomic) UIPickerView *genderPicker;
 @property (strong, nonatomic) UIPickerView *cityPicker;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 
+@property (weak, nonatomic) FetchingManagerCommunicator *communicatorEngine;
 @end
 
 @implementation CreateAccountViewController
@@ -44,7 +43,7 @@
 @synthesize genderPicker = _genderPicker;
 @synthesize cityPicker = _cityPicker;
 
-@synthesize flOperation = _flOperation;
+@synthesize communicatorEngine = _communicatorEngine;
 
 - (void)viewDidLoad
 { 
@@ -126,33 +125,22 @@
     self.cityField.inputView = self.cityPicker;
     
     // Create done button in UIPickerView
-    
-    
     self.mypickerToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 56)];
-    
     //self.mypickerToolbar.barStyle = UIBarStyleBlackOpaque;
-    
     [self.mypickerToolbar sizeToFit];
-    
-    
     NSMutableArray *barItems = [[NSMutableArray alloc] init];
-    
-    
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    
     [barItems addObject:flexSpace];
-    
-    
     UIBarButtonItem *doneBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(pickerDoneClicked)];
-    
     [barItems addObject:doneBtn];
-    
-    
     [self.mypickerToolbar setItems:barItems animated:YES];
-    
     
     self.genderField.inputAccessoryView = self.mypickerToolbar;
     self.cityField.inputAccessoryView = self.mypickerToolbar;
+    
+    //Link the communicator to the appdelegate's communicator
+    self.communicatorEngine = ApplicationDelegate.communicator;
+    self.communicatorEngine.delegate = self;
 }
 
 
@@ -255,7 +243,6 @@
         return NO;
     }
     
-    
     //check of email is valid
     if (![self NSStringIsValidEmail:self.emailAddressField.text]) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:NSLocalizedString(@"Make sure you fill out email address properly.", nil) delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil] show];
@@ -285,7 +272,6 @@
     return NO;
 }
 
-
 - (IBAction)doneButtonPressed {
     if ([self checkAllFields]) {
         [self.doneButton setTitle:@"SIGNING UP..." forState:UIControlStateNormal];
@@ -300,40 +286,18 @@
         
         [user setObject:self.firstNameField.text forKey:@"firstName"];
         [user setObject:self.lastNameField.text forKey:@"lastName"];
-        [user setObject:[NSNumber numberWithInt:0] forKey:@"numberOfReceiptsInProcess"];
-        [user setObject:[NSNumber numberWithDouble:0.0] forKey:@"accountBalance"];
-        [user setObject:[NSNumber numberWithDouble:0.0] forKey:@"totalSaved"];
-        [user setObject:self.genderField.text forKey:@"Sex"];
-        [user setObject:self.cityField.text forKey:@"City"];
-        [user setObject:self.postalField.text forKey:@"postal"];
+        [user setObject:self.cityField.text forKey:@"city"];
+
         
         __weak typeof(self) weakSelf = self;
         [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (!error) {
                 // Hooray! Let them use the app now.
                 
+                NSString *gender = [self.genderField.text isEqualToString:@"Male"] ? @"1" : @"2";
+                
                 //tell our file server to set up this user's directories
-                NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:self.emailAddressField.text,@"user_email", nil];
-                self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
-                
-                [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
-                    NSLog(@"user added success!");
-                    //handle a successful 200 response
-                    NSDictionary *responseDict = [operation responseJSON];
-                    NSNumber *userid = [responseDict objectForKey:@"new user"];
-                    NSLog(@"new user's id is %d", [userid intValue]);
-                    
-                    [weakSelf.parentViewController performSegueWithIdentifier:@"finish SignUp" sender:weakSelf.parentViewController];
-                }
-                                          errorHandler:^(MKNetworkOperation *completedOperation, NSError *error)
-                 {
-                     NSLog(@"%@", error);
-                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-                     [alert show];
-                 }];
-                
-                [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
-                
+                [weakSelf.communicatorEngine registerUser:user.username fName:self.firstNameField.text lName:self.lastNameField.text city:self.cityField.text postal:self.postalField.text gender:gender];
                 
             } else {
                 NSString *errorMessage;
@@ -355,7 +319,6 @@
         }];
         
     }
-
 }
 
 - (void)viewDidUnload
@@ -374,4 +337,16 @@
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
+
+#pragma mark - From FetchingManagerCommunicatorDelegate
+
+-(void)userRegistrationFailedWithError:(NSError *)error {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Server Error" message:@"It appears that our registration server is down, sorry for the inconvinience." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alert show];
+}
+
+-(void)userRegistrationSuccess {
+    [self.parentViewController performSegueWithIdentifier:@"finish SignUp" sender:self.parentViewController];
+}
+
 @end

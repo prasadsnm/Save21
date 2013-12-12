@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Leon_Austin_PrototypeViewController : UIViewController
+@interface RootViewController : UIViewController
 
 @end

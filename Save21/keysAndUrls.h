@@ -12,4 +12,5 @@
 #define REQUEST_CHEQUE_PAGE_URL @"http://google.com/"
 #define ABOUT_PAGE_URL @"http://google.com"
 #define WEBSERVICE_URL @"faxtechca.netfirms.com/save21"
+#define OFFER_PAGES_URL @"http://faxtechca.netfirms.com/save21/offer-pages/"
 #define WEB_API_FILE @"/indexAPI.php"

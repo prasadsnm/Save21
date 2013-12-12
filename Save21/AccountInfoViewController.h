@@ -9,9 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 
-@interface AccountInfoViewController : UITableViewController
-
-@property (nonatomic,strong) MKNetworkOperation *flOperation;
-
+@interface AccountInfoViewController : UITableViewController <FetchingManagerCommunicatorDelegate>
 
 @end

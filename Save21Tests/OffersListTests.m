@@ -7,10 +7,10 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "FakeOffersList.h"
+#import "OffersList.h"
 
 @interface OffersListTests : XCTestCase {
-    FakeOffersList *offerList;
+    OffersList *offerList;
 }
 
 @end
@@ -21,14 +21,7 @@
 {
     [super setUp];
     // Put setup code here; it will be run once, before the first test case.
-    offerList = [FakeOffersList offersList];
-}
-
-- (void)tearDown
-{
-    // Put teardown code here; it will be run once, after the last test case.
-    offerList = nil;
-    [super tearDown];
+    offerList = [OffersList offersList];
 }
 
 -(void)testThatOffersListExists {
@@ -36,7 +29,7 @@
 }
 
 -(void)testTheArrayIsActuallyAnArray {
-    XCTAssertTrue([offerList.fakeOffersArray isKindOfClass: [NSArray class]], @"OffersList should provide an array");
+    XCTAssertTrue([offerList.offersArray isKindOfClass: [NSArray class]], @"OffersList should provide an array");
 }
 
 -(void)testCanInitWithAnNilWithoutCrashing {
@@ -51,8 +44,15 @@
 -(void)testCanInitWithAnArrayAndAbleToReadTheArray {
     NSArray *testArray = [[NSArray alloc] initWithObjects:@"1", @"2", nil];
     [offerList initializeOffersList:testArray];
-    XCTAssertEqualObjects([[offerList fakeOffersArray] objectAtIndex: 0], @"1", @"List first item should contain the string '1'");
-    XCTAssertEqualObjects([[offerList fakeOffersArray] objectAtIndex: 1], @"2", @"List second item should contain the string '2'");
+    XCTAssertEqualObjects([[offerList offersArray] objectAtIndex: 0], @"1", @"List first item should contain the string '1'");
+    XCTAssertEqualObjects([[offerList offersArray] objectAtIndex: 1], @"2", @"List second item should contain the string '2'");
+}
+
+- (void)tearDown
+{
+    // Put teardown code here; it will be run once, after the last test case.
+    offerList = nil;
+    [super tearDown];
 }
 
 @end

@@ -64,7 +64,7 @@
     
     self.profileLocationLabel.textColor = darkColor;
     self.profileLocationLabel.font = [UIFont fontWithName:boldFontName size:12.0f];
-    self.profileLocationLabel.text = [NSString stringWithFormat:@"%@", [[PFUser currentUser] objectForKey:@"City"]];
+    self.profileLocationLabel.text = [NSString stringWithFormat:@"%@", [[PFUser currentUser] objectForKey:@"city"]];
     
     self.profileImageView.image = [UIImage imageNamed:@"user icon 130px.png"];
     self.profileImageView.clipsToBounds = YES;

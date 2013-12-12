@@ -7,7 +7,6 @@
 //
 
 #import "OfferViewController.h"
-#import "Save21AppDelegate.h"
 #import "Reachability.h"
 #import "MBProgressHUD.h"
 #import "keysAndUrls.h"
@@ -30,11 +29,11 @@ static inline Reachability* defaultReachability () {
 @property (weak, nonatomic) IBOutlet UILabel *warningLabel;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelHeight;
 @property (strong,nonatomic) MBProgressHUD *HUD;
-@property (nonatomic,strong) MKNetworkOperation *flOperation;
 @property (nonatomic,strong) NSString *cachesPath;
 @property (nonatomic,strong) NSString *cacheFile;
 @property (nonatomic,strong) NSString *urlFile;
 @property (nonatomic,strong) NSFileManager* fileManager;
+@property (weak, nonatomic) FetchingManagerCommunicator *communicatorEngine;
 @property BOOL connected;
 @end
 
@@ -45,7 +44,7 @@ static inline Reachability* defaultReachability () {
 @synthesize warningLabel = _warningLabel;
 @synthesize labelHeight = _labelHeight;
 @synthesize HUD = _HUD;
-@synthesize flOperation = _flOperation;
+@synthesize communicatorEngine = _communicatorEngine;
 @synthesize cacheFile = _cacheFile;
 @synthesize cachesPath = _cachesPath;
 @synthesize urlFile = _urlFile;
@@ -79,6 +78,10 @@ static inline Reachability* defaultReachability () {
     self.urlFile = [NSString stringWithFormat:@"http://%@/offer-pages/%@",WEBSERVICE_URL, self.offerPageURL];
     
     self.fileManager = [NSFileManager defaultManager];
+    
+    //Link the communicator to the appdelegate's communicator
+    self.communicatorEngine = ApplicationDelegate.communicator;
+    self.communicatorEngine.delegate = self;
 }
 
 
@@ -121,36 +124,7 @@ static inline Reachability* defaultReachability () {
 -(void)downloadWebPage {
     [self.HUD show:YES];
     
-    self.flOperation = [ApplicationDelegate.communicator downloadFileFrom:self.urlFile toFile:self.cacheFile];
-    
-    [self.flOperation onDownloadProgressChanged:^(double progress) {
-        self.HUD.progress = progress;
-    }];
-    
-    __weak typeof(self) weakSelf = self;
-    [self.flOperation addCompletionHandler:^(MKNetworkOperation* completedRequest) {
-        NSURL *url = [NSURL fileURLWithPath:weakSelf.cacheFile];
-        
-        [weakSelf.HUD hide:YES];
-        weakSelf.HUD.progress = 0.0f;
-        NSLog(@"Web page %@ downloaded to %@",weakSelf.urlFile, weakSelf.cacheFile);
-        
-        //display the downloaded page in the webview
-        [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
-        
-        weakSelf.connected = YES;
-        [weakSelf removeNoInternetWarning];
-    }
-    errorHandler:^(MKNetworkOperation *errorOp, NSError* error) {
-        [weakSelf.HUD hide:YES];
-        NSLog(@"Can't download web page: %@",weakSelf.urlFile);
-                                  
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Loading Error" message: @"It appears you are not online. Please connect to the Internet to load this page." delegate: nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
-                                  
-        weakSelf.connected = NO;
-        [weakSelf showNoInternetWarning];
-    }];
+    [self.communicatorEngine requestToDownloadFileFrom:self.urlFile toFile:self.cacheFile];
 }
 
 - (IBAction)refreshPressed:(UIBarButtonItem *)sender {
@@ -177,16 +151,6 @@ static inline Reachability* defaultReachability () {
     }];
 }
 
--(void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    NSLog(@"Cancelled downloading of webpage.");
-    //cancel the download if it isnt done yet
-    if([self.flOperation isExecuting]){
-        [self.fileManager removeItemAtPath:self.cacheFile error:NULL];
-        [self.flOperation cancel];
-    }
-}
 
 - (void)viewDidUnload
 {
@@ -213,7 +177,39 @@ static inline Reachability* defaultReachability () {
     return YES;
 }
 
-#pragma mark Notification Handling
+#pragma mark - From FetchingManagerCommunicatorDelegate
+
+-(void)downloadFileFailedWithError:(NSError *)error file:(NSString *)fileName {
+    [self.HUD hide:YES];
+    NSLog(@"Can't download web page: %@",fileName);
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Loading Error" message: @"It appears you are not online. Please connect to the Internet to load this page." delegate: nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+    
+    self.connected = NO;
+    [self showNoInternetWarning];
+
+}
+
+-(void)downloadFileSuccess:(NSString *)fileName {
+    NSURL *url = [NSURL fileURLWithPath:self.cacheFile];
+    
+    [self.HUD hide:YES];
+    self.HUD.progress = 0.0f;
+    NSLog(@"Web page %@ downloaded to %@",self.urlFile, self.cacheFile);
+    
+    //display the downloaded page in the webview
+    [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
+    
+    self.connected = YES;
+    [self removeNoInternetWarning];
+}
+
+-(void)fileTransferOperationProgress:(double)percentage {
+    self.HUD.progress = percentage;
+}
+
+#pragma mark Reachability Notification Handling
 - (void)checkNetworkStatus {
     // called after network status changes
     NetworkStatus internetStatus = [defaultReachability() currentReachabilityStatus];

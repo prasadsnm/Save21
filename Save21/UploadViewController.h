@@ -8,9 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import "FetchingManagerCommunicatorDelegate.h"
 
-@interface UploadViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate>
-
-@property (nonatomic,strong) MKNetworkOperation *flOperation;
+@interface UploadViewController : UIViewController <UIAlertViewDelegate,FetchingManagerCommunicatorDelegate>
 
 @end

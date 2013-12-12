@@ -26,9 +26,16 @@
 @property float min_amount_for_redeem;
 
 @property BOOL redeem_cheque_enabled;
+
+@property (weak, nonatomic) FetchingManagerCommunicator *communicatorEngine;
+
+@property (strong, nonatomic) MKNetworkOperation *flOperation; //to be removed later
+
 @end
 
 @implementation AccountInfoViewController
+@synthesize communicatorEngine = _communicatorEngine;
+@synthesize flOperation = _flOperation; //to be removed later
 
 enum AccountInfoPageSections {
     NameSection = 0,
@@ -88,6 +95,10 @@ enum AboutMe {
     [self.requestChequeButton setTitle:@"REQUEST CHEQUE" forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
+    
+    //Link the communicator to the appdelegate's communicator
+    self.communicatorEngine = ApplicationDelegate.communicator;
+    self.communicatorEngine.delegate = self;
 }
 
 -(void)refreshAccountInfo {
@@ -95,40 +106,10 @@ enum AboutMe {
     HUD.detailsLabelText = @"Refreshing account info...";
     [HUD show:YES];
     
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1", @"request_account_info",
-                                       [PFUser currentUser].email, @"user_email", nil];
-    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
-    
-    __weak typeof(self) weakSelf = self;
-    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
-        NSLog(@"Requesting user account info success!");
-        //handle a successful 200 response
-        NSDictionary *responseDict = [operation responseJSON];
-        weakSelf.num_of_pending_claims = [[responseDict objectForKey:@"num_of_pending_claims"] intValue];
-        weakSelf.account_balance = [[responseDict objectForKey:@"account_balance"] floatValue];
-        weakSelf.total_savings = [[responseDict objectForKey:@"total_savings"] floatValue];
-        weakSelf.min_amount_for_redeem = [[responseDict objectForKey:@"min_amount_redeem_cheque"] floatValue];
-        
-        if (weakSelf.account_balance >= weakSelf.min_amount_for_redeem)
-            weakSelf.redeem_cheque_enabled = YES;
-        else
-            weakSelf.redeem_cheque_enabled = NO;
-        
-        [weakSelf.tableView reloadData];
-        [HUD hide:YES];
-    }
-    errorHandler:^(MKNetworkOperation *completedOperation, NSError *error)
-     {
-         NSLog(@"%@", error);
-         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to refresh user account info try again." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-         [alert show];
-         
-         [HUD hide:YES];
-         
-     }];
-    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
+    [self.communicatorEngine refreshUserInfo:[PFUser currentUser].email];
 }
 
+//this is only for demo, it is more likely the cheque request to server will be sent from the actual website than the app itself, therefore this function will not be refactored into the FetchingManagerCommunicator
 -(void)request_cheque {
     HUD.labelText = @"Please wait";
     HUD.detailsLabelText = @"Sending cheque request...";
@@ -195,6 +176,8 @@ enum AboutMe {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark - Tableview set up
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     if (section == 1 || section == 2) {
@@ -273,17 +256,29 @@ enum AboutMe {
     }
 }
 
-#pragma mark - Table view delegate
+#pragma mark - From FetchingManagerCommunicatorDelegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+-(void)receivedUserInfoFailedWithError:(NSError *)error {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to refresh user account info try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alert show];
+    
+    [HUD hide:YES];
+}
+
+-(void)receivedUserInfo:(NSDictionary *)userInfo {
+    self.num_of_pending_claims = [[userInfo objectForKey:@"num_of_pending_claims"] intValue];
+    self.account_balance = [[userInfo objectForKey:@"account_balance"] floatValue];
+    self.total_savings = [[userInfo objectForKey:@"total_savings"] floatValue];
+    self.min_amount_for_redeem = [[userInfo objectForKey:@"min_amount_redeem_cheque"] floatValue];
+    
+    if (self.account_balance >= self.min_amount_for_redeem)
+        self.redeem_cheque_enabled = YES;
+    else
+        self.redeem_cheque_enabled = NO;
+    
+    [self.tableView reloadData];
+    
+    [HUD hide:YES];
 }
 
 @end

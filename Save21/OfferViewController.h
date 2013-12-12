@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OfferViewController : UIViewController <UIWebViewDelegate>
+@interface OfferViewController : UIViewController <UIWebViewDelegate,FetchingManagerCommunicatorDelegate>
 
 @property (nonatomic,weak) IBOutlet UIWebView *webView;
 @property (nonatomic,strong) NSString *offerPageID;

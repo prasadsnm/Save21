@@ -13,9 +13,7 @@
 #import "keysAndUrls.h"
 #import "OffersList.h"
 #import "MBProgressHUD.h"
-#import "OfferTableCell.h"
 #import "Reachability.h"
-#import "SDImageCache.h"
 
 static Reachability *_reachability = nil;
 BOOL _reachabilityOn;
@@ -30,14 +28,12 @@ static inline Reachability* defaultReachability () {
     return _reachability;
 }
 
-#define AppIconHeight    75.0f
+#define AppIconHeight    75.0f  //the icon size for table cell image
 
 @interface OffersListViewController () <FetchingManagerDelegate> {
-    FetchingManager *_manager;
     OffersList *offersBox;
     
     long indexOfSelectedCell;
-
     
     MBProgressHUD *HUD;
     
@@ -50,9 +46,9 @@ static inline Reachability* defaultReachability () {
     NSString *offerURLForSegue;
     
     BOOL connected;
+    BOOL needsToRefresh;
 }
 
-@property (weak, nonatomic) IBOutlet UITableView *offersListTable;
 @property (weak, nonatomic) IBOutlet UILabel *warningLabel;
 @property (strong, nonatomic) IBOutlet AOScrollerView *scrollPictureView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelHeight;
@@ -60,9 +56,9 @@ static inline Reachability* defaultReachability () {
 @end
 
 @implementation OffersListViewController
-
-@synthesize revealController;
 @synthesize offersListTable = _offersListTable;
+@synthesize dataSourceAndDelegate = _dataSourceAndDelegate;
+@synthesize revealController;
 @synthesize warningLabel = _warningLabel;
 @synthesize scrollPictureView = _scrollPictureView;
 
@@ -81,9 +77,7 @@ static inline Reachability* defaultReachability () {
     [menuButton setBackgroundImage:[UIImage imageNamed:@"menu.png"] forState:UIControlStateNormal];
     menuButton.tintColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
     [menuButton addTarget:self action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
-    
     UIBarButtonItem* menuItem = [[UIBarButtonItem alloc] initWithCustomView:menuButton];
-    
     self.navigationItem.leftBarButtonItem = menuItem;
     
     //initialize the progress HUD
@@ -99,22 +93,44 @@ static inline Reachability* defaultReachability () {
     //Initialize the Singleton OffersList variable
     offersBox = [OffersList offersList];
     
-    [self.offersListTable setDataSource:self];
-    [self.offersListTable setDelegate:self];
+    //Init and set up the tableview datasource
+    self.dataSourceAndDelegate = ApplicationDelegate.dataSource;
     
-    _manager = [[FetchingManager alloc] init];
-    _manager.delegate = self;
+    [self.offersListTable setDataSource:self.dataSourceAndDelegate];
+    [self.offersListTable setDelegate:self.dataSourceAndDelegate];
     
-    //clear the thumbnail and banner images cache(remove everything over one week old)
-    [[SDImageCache sharedImageCache] cleanDisk];
+    //link the fetchManager to the one in ApplicationDelegate
+    ApplicationDelegate.manager.delegate = self;
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self startInternetReachability];
+    
+    //set the tableView datasource to NOT show checkmarks
+    [self.dataSourceAndDelegate setShowCheckMarks:NO];
+    
+    [[NSNotificationCenter defaultCenter]
+     addObserver: self
+     selector: @selector(userDidSelectOfferNotification:)
+     name: OfferTableDidSelectOfferNotification
+     object: nil];
+    
+    
+    needsToRefresh = NO;
+    
     [self startFetchingOffers];
+    [self startInternetReachability];
 }
 
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear: animated];
+    
+    [self stopInternerReachability];
+    
+    [[NSNotificationCenter defaultCenter]
+     removeObserver: self name: OfferTableDidSelectOfferNotification object: nil];
+}
 
 //slide out the slider bar
 - (void)revealToggle:(id)sender {
@@ -125,68 +141,10 @@ static inline Reachability* defaultReachability () {
 - (void)startFetchingOffers
 {
     [HUD show:YES];
+    
+    needsToRefresh = NO;
     //fetch from offers
-    [_manager fetchOffers];
-}
-
-- (void)didReceiveOffers:(NSArray *)offers
-{
-    
-    //[self removeNoInternetWarning];
-    //connected = YES;
-    
-    [offersBox initializeOffersList:offers];
-    
-    arrayOfBannersImageURLs = nil;
-    arrayOfBannersTitles = nil;
-    arrayOfBannersOfferIDs = nil;
-    arrayOfBannersOfferURLs = nil;
-    
-    arrayOfBannersImageURLs = [[NSMutableArray alloc] init];
-    arrayOfBannersTitles = [[NSMutableArray alloc] init];
-    arrayOfBannersOfferIDs = [[NSMutableArray alloc] init];
-    arrayOfBannersOfferURLs = [[NSMutableArray alloc] init];
-    
-    for (singleOffer *offer in offersBox.offersArray) {
-        if ([offer.properties isEqualToString:@"banner"]) {
-            [arrayOfBannersImageURLs addObject:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]];
-            [arrayOfBannersTitles addObject:offer.name];
-            [arrayOfBannersOfferIDs addObject:offer.offerid];
-            [arrayOfBannersOfferURLs addObject:offer.offerurl];
-        }
-        //NSLog(@"%@",[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]);
-    }
-    
-    //dispatch_async(dispatch_get_main_queue(), ^{
-        //remove the old scroll view if it exists
-        if ([self.scrollPictureView isKindOfClass:[AOScrollerView class]]) {
-            [self.scrollPictureView removeFromSuperview];
-        }
-            
-        //initialize the banner view
-        self.scrollPictureView = [[AOScrollerView alloc]initWithNameArr:arrayOfBannersImageURLs titleArr:arrayOfBannersTitles height:150];
-            
-        self.scrollPictureView.vDelegate=self;
-            
-        //add banner to top of table
-        self.offersListTable.tableHeaderView = self.scrollPictureView;
-        
-        //hide the waiting pop up
-        [HUD hide:YES];
-        
-        [self.offersListTable reloadData];
-    //});
-}
-
--(void)failedToReceiveOffersWithError:(NSError *)error {
-    [self showNoInternetWarning];
-    connected = NO;
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't get the lastest offers from server, please check internet connectivity and try again later." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-    [alert show];
-    
-    //hide the waiting pop up
-    [HUD hide:YES];
+    [ApplicationDelegate.manager fetchOffers];
 }
 
 -(void)showNoInternetWarning {
@@ -208,7 +166,6 @@ static inline Reachability* defaultReachability () {
     }];
 }
 
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -220,83 +177,6 @@ static inline Reachability* defaultReachability () {
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-#pragma mark - Table View
-
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return offersBox.offersArray.count;
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    indexOfSelectedCell = indexPath.row;
-    
-    singleOffer *selectedOffer = offersBox.offersArray[indexOfSelectedCell];
-    
-    offerIDForSegue = selectedOffer.offerid;
-    offerURLForSegue = selectedOffer.offerurl;
-    
-    NSLog(@"Offer ID %@ to segue",offerIDForSegue);
-    NSLog(@"Offer URL %@ to segue",offerURLForSegue);
-    
-    [self performSegueWithIdentifier:@"show Offer" sender: self];
-}
-
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if ([offersBox.offersArray count] == 0)
-	{
-		return [self placeholderCell];
-	}
-	else
-	{
-		return [self recordCellForIndexPath:indexPath];
-	}
-}
-
-- (UITableViewCell *)placeholderCell
-{
-	static NSString *CellIdentifier = @"offerCell";
-    
-	OfferTableCell *cell = [self.offersListTable dequeueReusableCellWithIdentifier:CellIdentifier];
-	if (cell == nil)
-	{
-		cell = [[OfferTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	}
-    
-	cell.nameLabel.text = @"Loading…";
-	return cell;
-}
-
-- (UITableViewCell *)recordCellForIndexPath:(NSIndexPath *)indexPath
-{
-	static NSString *CellIdentifier = @"offerCell";
-    
-	OfferTableCell *cell = [self.offersListTable dequeueReusableCellWithIdentifier:CellIdentifier];
-	if (cell == nil)
-	{
-		cell = [[OfferTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-	}
-    singleOffer *currentOffer = offersBox.offersArray[indexPath.row];
-    
-    cell.nameLabel.text = currentOffer.name;
-	cell.updateLabel.text = currentOffer.description;
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
-    
-    if (currentOffer.total_offered == -1)
-        cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
-    else {
-        if ( ( currentOffer.total_offered - currentOffer.num_of_valid_claims ) < 1 )
-            cell.dateLabel.text = @"SOLD OUT";
-        else
-            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims )];
-    }
-    
-    NSString *thumbnail_URL = [NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL];
-    
-    [cell.profileImageView setImageFromUrl:YES withUrl:thumbnail_URL];
-	return cell;
 }
 
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
@@ -313,11 +193,87 @@ static inline Reachability* defaultReachability () {
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"show Offer"]) {        
+    if ([segue.identifier isEqualToString:@"show Offer"]) {
         [segue.destinationViewController setOfferPageID:offerIDForSegue];
         [segue.destinationViewController setOfferPageURL:offerURLForSegue];
     }
 }
+
+#pragma mark - From FetchingManagerCommunicatorDelegate
+
+- (void)didReceiveOffers:(NSArray *)offers
+{
+    //send the received offers to the OffersList singleton for storage
+    [offersBox initializeOffersList:offers];
+    
+    //set up the banner view
+    arrayOfBannersImageURLs = nil;
+    arrayOfBannersTitles = nil;
+    arrayOfBannersOfferIDs = nil;
+    arrayOfBannersOfferURLs = nil;
+    
+    arrayOfBannersImageURLs = [[NSMutableArray alloc] init];
+    arrayOfBannersTitles = [[NSMutableArray alloc] init];
+    arrayOfBannersOfferIDs = [[NSMutableArray alloc] init];
+    arrayOfBannersOfferURLs = [[NSMutableArray alloc] init];
+    
+    for (singleOffer *offer in offersBox.offersArray) {
+        if ([offer.properties isEqualToString:@"banner"]) {
+            [arrayOfBannersImageURLs addObject:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]];
+            [arrayOfBannersTitles addObject:offer.name];
+            [arrayOfBannersOfferIDs addObject:offer.offerid];
+            [arrayOfBannersOfferURLs addObject:offer.offerurl];
+        }
+        //NSLog(@"%@",[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]);
+    }
+    
+    //remove the old scroll view if it exists
+    if ([self.scrollPictureView isKindOfClass:[AOScrollerView class]]) {
+        [self.scrollPictureView removeFromSuperview];
+    }
+    
+    //initialize the banner view
+    self.scrollPictureView = [[AOScrollerView alloc]initWithNameArr:arrayOfBannersImageURLs titleArr:arrayOfBannersTitles height:150];
+    
+    self.scrollPictureView.vDelegate=self;
+    
+    //add banner to top of table
+    self.offersListTable.tableHeaderView = self.scrollPictureView;
+    
+    //hide the waiting pop up
+    [HUD hide:YES];
+    
+    //send the received offers data to tableview's datasource
+    [self.dataSourceAndDelegate setOffers:offers];
+    
+    [self.offersListTable reloadData];
+}
+
+-(void)failedToReceiveOffersWithError:(NSError *)error {
+    [self showNoInternetWarning];
+    connected = NO;
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Can't get the lastest offers from server, please check internet connectivity and try again later." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alert show];
+    
+    //hide the waiting pop up
+    [HUD hide:YES];
+}
+
+#pragma mark tableview data source Notification handling
+
+-(void)userDidSelectOfferNotification:(NSNotification *)note {
+    singleOffer * selectedOffer = (singleOffer *)[note object];
+     
+    offerIDForSegue = selectedOffer.offerid;
+    offerURLForSegue = selectedOffer.offerurl;
+     
+    NSLog(@"Offer ID %@ to segue",offerIDForSegue);
+    NSLog(@"Offer URL %@ to segue",offerURLForSegue);
+     
+    [self performSegueWithIdentifier:@"show Offer" sender: self];
+}
+
 
 #pragma AOScrollViewDelegate
 -(void)buttonClick:(int)vid{
@@ -328,7 +284,7 @@ static inline Reachability* defaultReachability () {
     [self performSegueWithIdentifier:@"show Offer" sender:self];
 }
 
-#pragma mark Notification Handling
+#pragma mark Reachability Notification Handling
 - (void)checkNetworkStatus {
     // called after network status changes
     NetworkStatus internetStatus = [defaultReachability() currentReachabilityStatus];
@@ -338,6 +294,8 @@ static inline Reachability* defaultReachability () {
             NSLog(@"Unreachable");
             [self performSelector:@selector(showNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
             connected = NO;
+            needsToRefresh = YES;
+            
             break;
         }
             
@@ -346,7 +304,10 @@ static inline Reachability* defaultReachability () {
             NSLog(@"Reachable");
             [self performSelector:@selector(removeNoInternetWarning) withObject:nil afterDelay:0.1]; // performed with a small delay to avoid multiple notification causing stange jumping
             connected = YES;
-            [self startFetchingOffers];
+            
+            if (needsToRefresh)
+                [self startFetchingOffers];
+            
             break;
         }
             

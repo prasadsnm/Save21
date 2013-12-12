@@ -6,9 +6,12 @@
 //  Copyright (c) 2013 Feiyang Chen. All rights reserved.
 //
 
+//TESTED
+
 #import "OffersList.h"
 
 @implementation OffersList
+
 @synthesize offersArray = _offersArray;
 
 +(OffersList *)offersList{

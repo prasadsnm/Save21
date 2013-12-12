@@ -45,8 +45,8 @@
     
     [self presentViewController:revealController animated:YES completion:^{
         //show sider bar
-        if (self.shouldShowSliderBarAtStart)
-            [revealController toggleSidebar:YES duration:0];
+        //if (self.shouldShowSliderBarAtStart)
+            //[revealController toggleSidebar:YES duration:0];
     }];
 
 }

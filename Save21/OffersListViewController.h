@@ -9,7 +9,14 @@
 #import "IRevealControllerProperty.h"
 #import "AOScrollerView.h"
 #import "FetchingManagerDelegate.h"
+#import "OfferTableViewDataSource.h"
 
-@interface OffersListViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,IRevealControllerProperty,ValueClickDelegate,FetchingManagerDelegate>
+@interface OffersListViewController : UIViewController <IRevealControllerProperty,ValueClickDelegate,FetchingManagerDelegate>
+
+@property (strong, nonatomic) IBOutlet UITableView *offersListTable;
+
+@property (weak, nonatomic) OfferTableViewDataSource *dataSourceAndDelegate;
+
+- (void)userDidSelectOfferNotification: (NSNotification *)note;
 
 @end

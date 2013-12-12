@@ -11,6 +11,7 @@
 @protocol FetchingManagerDelegate <NSObject>
 
 - (void)didReceiveOffers:(NSArray *)offers;
+
 - (void)failedToReceiveOffersWithError: (NSError *)error;
 
 @end

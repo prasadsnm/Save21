@@ -7,13 +7,12 @@
 //
 
 #import "UploadViewController.h"
-#import "Save21AppDelegate.h"
 #import "singleOffer.h"
 #import "keysAndUrls.h"
 #import "ImagesBox.h"
 #import "OffersList.h"
 #import "MBProgressHUD.h"
-#import "OfferTableCell.h"
+#import "OfferTableViewDataSource.h"
 
 #define AppIconHeight   75.0f
 
@@ -21,10 +20,13 @@
     //NSArray *_offers; //replaced by the singleton offerslist object
     ImagesBox *anotherBox;
     OffersList *anotherOfferBox;
+    BOOL addingToreceipts_and_offers_tableSuccess;
 }
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITableView *offersListTable;
-@property (strong, nonatomic) NSMutableDictionary *DictionaryOfSelectedOfferIDs;
+@property (weak, nonatomic) OfferTableViewDataSource *dataSourceAndDelegate;
+@property (weak, nonatomic) FetchingManagerCommunicator *communicatorEngine;
+
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (strong, nonatomic) NSString *currentReceiptID;
@@ -35,14 +37,9 @@
 @implementation UploadViewController
 
 @synthesize offersListTable = _offersListTable;
-@synthesize DictionaryOfSelectedOfferIDs = _DictionaryOfSelectedOfferIDs;
-@synthesize flOperation = _flOperation;
+@synthesize dataSourceAndDelegate = _dataSourceAndDelegate;
+@synthesize communicatorEngine = _communicatorEngine;
 @synthesize currentReceiptID = _currentReceiptID;
-
--(NSMutableDictionary *)DictionaryOfSelectedOfferIDs {
-    if (_DictionaryOfSelectedOfferIDs == nil) _DictionaryOfSelectedOfferIDs = [[NSMutableDictionary alloc] init];
-    return _DictionaryOfSelectedOfferIDs;
-}
 
 - (void)viewDidLoad
 {
@@ -78,13 +75,47 @@
     self.titleLabel.textColor =  [UIColor whiteColor];
     self.titleLabel.font =  [UIFont fontWithName:boldFontName size:24.0f];
     
-    [self.offersListTable setDataSource:self];
-    [self.offersListTable setDelegate:self];
+    //Link the communicator to the appdelegate's communicator
+    self.communicatorEngine = ApplicationDelegate.communicator;
+    self.communicatorEngine.delegate = self;
     
+    //Init and set up the tableview datasource
+    self.dataSourceAndDelegate = ApplicationDelegate.dataSource;
+    
+    [self.offersListTable setDataSource:self.dataSourceAndDelegate];
+    [self.offersListTable setDelegate:self.dataSourceAndDelegate];
+    
+    //Initialize the Singletons variables
     anotherBox = [ImagesBox imageBox];
     anotherOfferBox = [OffersList offersList];
     
+    //connect to the server to fetch for the receipt ID of this upload
     [self requestReceiptID];
+    
+    //by default addingToreceipts_and_offers_tableSuccess is false
+    addingToreceipts_and_offers_tableSuccess = NO;
+}
+
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    //set the tableView datasource to show checkmarks
+    [self.dataSourceAndDelegate setShowCheckMarks:YES];
+    
+    //refresh table
+    [self.offersListTable reloadData];
+    
+    [[NSNotificationCenter defaultCenter]
+     addObserver: self
+     selector: @selector(userDidSelectOfferNotification:)
+     name: OfferTableDidSelectOfferNotification
+     object: nil];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear: animated];
+    [[NSNotificationCenter defaultCenter]
+     removeObserver: self name: OfferTableDidSelectOfferNotification object: nil];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -92,185 +123,37 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-#pragma mark - Table View
-
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return anotherOfferBox.offersArray.count;
-}
-
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([anotherOfferBox.offersArray count] == 0)
-	{
-		return [self placeholderCell];
-	}
-	else
-	{
-		return [self recordCellForIndexPath:indexPath];
-	}
-}
-
-- (UITableViewCell *)placeholderCell
-{
-	static NSString *CellIdentifier = @"offerCell";
-    
-	OfferTableCell *cell = [self.offersListTable dequeueReusableCellWithIdentifier:CellIdentifier];
-	if (cell == nil)
-	{
-		cell = [[OfferTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-	}
-    
-	cell.nameLabel.text = @"Loading…";
-	return cell;
-}
-
-- (UITableViewCell *)recordCellForIndexPath:(NSIndexPath *)indexPath
-{
-	static NSString *CellIdentifier = @"offerCell";
-    
-	OfferTableCell *cell = [self.offersListTable dequeueReusableCellWithIdentifier:CellIdentifier];
-	if (cell == nil)
-	{
-		cell = [[OfferTableCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-	}
-    singleOffer *currentOffer = anotherOfferBox.offersArray[indexPath.row];
-    
-    cell.nameLabel.text = currentOffer.name;
-	cell.updateLabel.text = currentOffer.description;
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"$%.2f",currentOffer.rebate_amount];
-    
-    if (currentOffer.total_offered == -1)
-        cell.dateLabel.text = [NSString stringWithFormat:@"Unlimited"];
-    else {
-        if ( (currentOffer.total_offered - currentOffer.num_of_valid_claims ) < 1 )
-            cell.dateLabel.text = @"SOLD OUT";
-        else
-            cell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims )];
-    }
-    
-    //draw check mark on selected cell
-    if ( [self.DictionaryOfSelectedOfferIDs objectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid] )
-    {
-        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-    }
-    else
-    {
-        cell.accessoryType=UITableViewCellAccessoryNone;
-    }
-    
-    //set the picture for each cell
-    NSString *thumbnail_URL = [NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL,currentOffer.pictureURL];
-    
-    [cell.profileImageView setImageFromUrl:YES withUrl:thumbnail_URL];
-	return cell;
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    if ([self.DictionaryOfSelectedOfferIDs objectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid] == nil)
-    {
-        [self.DictionaryOfSelectedOfferIDs setObject:[NSNull null]  forKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid];
-        
-        NSLog(@"Row %ld checked",(long)indexPath.row);
-    }
-    else
-    {
-        [self.DictionaryOfSelectedOfferIDs removeObjectForKey:((singleOffer *)[anotherOfferBox.offersArray objectAtIndex:indexPath.row]).offerid];
-        
-        NSLog(@"Row %ld unchecked",(long)indexPath.row);
-    }
-    
-    [tableView  reloadData];
-}
-
 -(void)requestReceiptID {
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[PFUser currentUser].email, @"user_email", @"1", @"upload_receipt", nil];
-    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
-    
-    __weak typeof(self) weakSelf = self;
-    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
-        NSLog(@"Requesting receiptID success!");
-        //handle a successful 200 response
-        NSDictionary *responseDict = [operation responseJSON];
-        weakSelf.currentReceiptID = [responseDict objectForKey:@"new receipt"];
-    }
-    errorHandler:^(MKNetworkOperation *completedOperation, NSError *error)
-     {
-         NSLog(@"%@", error);
-         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to request a new receipt ID, please click upload to try again." delegate:weakSelf cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-         [alert show];
-     }];
-    
-    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
+    [self.communicatorEngine requestReceiptIDForUserEmail:[PFUser currentUser].email];
 }
 
 -(void)uploadImageBox {
     [self.HUD show:YES];
     
-    NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       [PFUser currentUser].email, @"user_email",
-                                       self.currentReceiptID, @"receiptID",
-                                       [NSString stringWithFormat: @"%lu", (unsigned long)anotherBox.imageArray.count],@"num_of_photos",
-                                       nil];
-    self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path: WEB_API_FILE];
-    
-    NSLog(@"imagebox has %lu images",(unsigned long)anotherBox.imageArray.count);
-
-    NSInteger counter = 1;
-    for (NSData *image in anotherBox.imageArray) {
-        NSString *fileName = [NSString stringWithFormat:@"Receipt-%ld.jpeg",(long)counter];
-        
-        [self.flOperation addData:image forKey:@"file[]" mimeType:@"image/jpeg" fileName:fileName];
-        counter++;
-    }
-    
-    __weak typeof(self) weakSelf = self;
-    [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
-        //handle a successful 200 response
-        NSLog(@"Images uploaded!");
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"Upload completed!" delegate:weakSelf cancelButtonTitle:@"Done" otherButtonTitles:nil];
-        [alert show];
-        [weakSelf.HUD hide:YES];
-    }
-                              errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
-                                  NSLog(@"%@", error);
-                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload failed, please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-                                  [alert show];
-                                  [weakSelf.HUD hide:YES];
-                              }];
-    
-    [self.flOperation onUploadProgressChanged:^(double progress) {
-        self.HUD.progress = progress;
-    }];
-    
-    [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
+    [self.communicatorEngine uploadImages:anotherBox.imageArray forEmail:[PFUser currentUser].email andReceiptID:self.currentReceiptID];
 }
 
 -(void)addTo_receipts_and_offers_table {
-    for (NSNumber* key in self.DictionaryOfSelectedOfferIDs) {
-        NSMutableDictionary *postParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:[key stringValue], @"offerID", self.currentReceiptID, @"receiptID", nil];
-        self.flOperation = [ApplicationDelegate.communicator postDataToServer:postParams path:WEB_API_FILE];
-        
-        [self.flOperation addCompletionHandler:^(MKNetworkOperation *operation){
-            //handle a successful 200 response
-        }
-        errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
-            NSLog(@"%@", error);
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-            [alert show];
-        }];
-        
-        [ApplicationDelegate.communicator enqueueOperation:self.flOperation];
-    }
+    [self.communicatorEngine addTo_receipts_and_offers_table:self.currentReceiptID withOfferIDs:[self.dataSourceAndDelegate DictionaryOfSelectedOfferIDs]];
 }
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
-    [self uploadImageBox];
-    
-    [self addTo_receipts_and_offers_table];
+    //be sure the user has selected at least one offer
+    if ([self.dataSourceAndDelegate DictionaryOfSelectedOfferIDs].count){
+        //don't let user click it twice
+        [self.doneButton setEnabled:NO];
+        
+        //start by updating the receipts_and_offers_table
+        [self addTo_receipts_and_offers_table];
+        
+        //next upload the photos
+        [self uploadImageBox];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Must check at least one offer that applies to this receipt." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+    }
 }
+
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -288,8 +171,6 @@
 		[self performSegueWithIdentifier:@"Done Uploading" sender:self];
 	} else if ([title isEqualToString:@"Dismiss"]) {
         [self performSegueWithIdentifier:@"Back to PicturesView" sender:self];
-    } else if ([title isEqualToString:@"Retry"]) {
-        [self requestReceiptID];
     }
 }
 
@@ -301,6 +182,69 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
+}
+
+#pragma mark - From FetchingManagerCommunicatorDelegate
+
+-(void)requestingReceiptIDFailedWithError: (NSError *)error{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to request a new receipt ID, please click upload to try again." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alert show];
+}
+
+-(void)receivedReceiptID:(NSString *)receiptID{
+    NSLog(@"New receiptID is: %@",receiptID);
+    self.currentReceiptID = receiptID;
+}
+
+-(void)uploadImagesFailedWithError:(NSError *)error {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload failed, please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alert show];
+    [self.HUD hide:YES];
+    [self.doneButton setEnabled:YES];
+}
+
+-(void)uploadImagesSuccess {
+    if (addingToreceipts_and_offers_tableSuccess) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"Receipt upload completed!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil];
+        [alert show];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Upload failed, please try again." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+    }
+    [self.HUD hide:YES];
+}
+
+-(void)fileTransferOperationProgress:(double)percentage{
+    self.HUD.progress = percentage;
+}
+
+-(void)addTo_receipts_and_offers_tableFailedWithError: (NSError *)error {
+    addingToreceipts_and_offers_tableSuccess = NO;
+}
+
+-(void)addTo_receipts_and_offers_tableSuccess {
+    addingToreceipts_and_offers_tableSuccess = YES;
+}
+
+#pragma mark - Notification handling
+
+-(void)userDidSelectOfferNotification:(NSNotification *)note {
+    singleOffer * selectedOffer = (singleOffer *)[note object];
+    
+    if ([[self.dataSourceAndDelegate DictionaryOfSelectedOfferIDs] objectForKey:selectedOffer.offerid] == nil)
+    {
+        [[self.dataSourceAndDelegate DictionaryOfSelectedOfferIDs]  setObject:@"" forKey: selectedOffer.offerid];
+        
+        NSLog(@"Offer %@ checked",selectedOffer.name);
+    }
+    else
+    {
+        [[self.dataSourceAndDelegate DictionaryOfSelectedOfferIDs]  removeObjectForKey:selectedOffer.offerid];
+        
+        NSLog(@"Offer %@ unchecked",selectedOffer.name);
+    }
+    
+    [self.offersListTable reloadData];
 }
 
 @end

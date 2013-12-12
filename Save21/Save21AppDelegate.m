@@ -13,6 +13,8 @@
 
 @implementation Save21AppDelegate
 @synthesize communicator = _communicator;
+@synthesize manager = _manager;
+@synthesize dataSource = _dataSource;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -29,6 +31,10 @@
                                                            darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
     
     self.communicator = [[FetchingManagerCommunicator alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
+    self.manager = [[FetchingManager alloc] init];
+    self.dataSource = [[OfferTableViewDataSource alloc] init];
+    
+    self.communicator.delegate = self.manager;
     
     return YES;
 }

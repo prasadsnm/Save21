@@ -9,5 +9,16 @@
 #import "MockFetchingManagerDelegate.h"
 
 @implementation MockFetchingManagerDelegate
+@synthesize fetchedOffers = _fetchedOffers;
+@synthesize fetchError = _fetchError;
 
+-(void)didReceiveOffers:(NSArray *)offers {
+    NSLog(@"Received offers from FetchingManager");
+    self.fetchedOffers = offers;
+    NSLog(@"%@",[offers description]);
+}
+
+-(void)failedToReceiveOffersWithError:(NSError *)error {
+    self.fetchError = error;
+}
 @end

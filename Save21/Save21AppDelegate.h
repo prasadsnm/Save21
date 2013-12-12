@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "FetchingManagerCommunicator.h"
+#import "FetchingManager.h"
+#import "OfferTableViewDataSource.h"
 
 #define ApplicationDelegate ((Save21AppDelegate *)[[UIApplication sharedApplication] delegate])
 
@@ -16,5 +18,9 @@
 @property (strong, nonatomic) UIWindow *window;
 
 @property (strong, nonatomic) FetchingManagerCommunicator *communicator;
+
+@property (strong, nonatomic) FetchingManager *manager;
+
+@property (strong, nonatomic) OfferTableViewDataSource *dataSource;
 
 @end
