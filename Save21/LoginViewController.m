@@ -45,13 +45,9 @@
     self.navigationItem.leftBarButtonItem=nil;
     self.navigationItem.hidesBackButton=YES;
     
-    UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    
     NSString* fontName = @"Avenir-Book";
-    NSString* boldFontName = @"Avenir-Black";
     
-    self.view.backgroundColor = mainColor;
+    self.view.backgroundColor = ApplicationDelegate.mainColor;
     
     self.emailAddressField.backgroundColor = [UIColor whiteColor];
     self.emailAddressField.layer.cornerRadius = 3.0f;
@@ -84,9 +80,9 @@
     self.passwordField.leftViewMode = UITextFieldViewModeAlways;
     self.passwordField.leftView = passwordIconContainer;
     
-    self.loginButton.backgroundColor = darkColor;
+    self.loginButton.backgroundColor = ApplicationDelegate.darkColor;
     self.loginButton.layer.cornerRadius = 3.0f;
-    self.loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
+    self.loginButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     [self.loginButton setTitle:@"LOG IN" forState:UIControlStateNormal];
     [self.loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.loginButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
@@ -94,11 +90,11 @@
     self.forgotButton.backgroundColor = [UIColor clearColor];
     self.forgotButton.titleLabel.font = [UIFont fontWithName:fontName size:12.0f];
     [self.forgotButton setTitle:@"Forgot Password?" forState:UIControlStateNormal];
-    [self.forgotButton setTitleColor:darkColor forState:UIControlStateNormal];
+    [self.forgotButton setTitleColor:ApplicationDelegate.darkColor forState:UIControlStateNormal];
     [self.forgotButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:0.5] forState:UIControlStateHighlighted];
     
     self.titleLabel.textColor =  [UIColor whiteColor];
-    self.titleLabel.font =  [UIFont fontWithName:boldFontName size:24.0f];
+    self.titleLabel.font =  [UIFont fontWithName:ApplicationDelegate.boldFontName size:24.0f];
     self.titleLabel.text = @"GOOD TO SEE YOU";
     
     self.subTitleLabel.textColor =  [UIColor whiteColor];

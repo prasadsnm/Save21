@@ -77,7 +77,7 @@
     [manager2 fetchOffers];
     
     //wait 5 secs for the fetching process
-    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:8];
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:10];
     do {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:timeoutDate];
         if([timeoutDate timeIntervalSinceNow] < 0.0)

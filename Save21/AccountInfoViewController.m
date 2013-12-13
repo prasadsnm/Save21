@@ -13,9 +13,9 @@
 
 @interface AccountInfoViewController () {
     MBProgressHUD *HUD;
+    BOOL refreshed;
 }
 
-@property (nonatomic, strong) NSString* boldFontName;
 @property (nonatomic, strong) UIColor* onColor;
 @property (nonatomic, strong) UIColor* dividerColor;
 @property (weak, nonatomic) IBOutlet UIButton *requestChequeButton;
@@ -70,14 +70,8 @@ enum AboutMe {
     HUD.mode = MBProgressHUDModeAnnularDeterminate;
     [self.view addSubview:HUD];
     
-    //[HUD showWhileExecuting:@selector(doSomeFunkyStuff) onTarget:self withObject:nil animated:YES];
-    
-    self.boldFontName = @"Avenir-Black";
-    
     self.onColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
     UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    
-    //self.onColor = [UIColor colorWithRed:222.0/255 green:59.0/255 blue:47.0/255 alpha:1.0f];
     
     self.dividerColor = [UIColor whiteColor];
     
@@ -91,7 +85,7 @@ enum AboutMe {
     
     self.requestChequeButton.backgroundColor = darkColor;
     self.requestChequeButton.layer.cornerRadius = 3.0f;
-    self.requestChequeButton.titleLabel.font = [UIFont fontWithName:self.boldFontName size:20.0f];
+    self.requestChequeButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     [self.requestChequeButton setTitle:@"REQUEST CHEQUE" forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.requestChequeButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
@@ -99,6 +93,9 @@ enum AboutMe {
     //Link the communicator to the appdelegate's communicator
     self.communicatorEngine = ApplicationDelegate.communicator;
     self.communicatorEngine.delegate = self;
+    
+    //make the balance amount a - instead of 0 at the start
+    refreshed = NO;
 }
 
 -(void)refreshAccountInfo {
@@ -186,7 +183,7 @@ enum AboutMe {
     
         UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(30, 9, 200, 40)];
         label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont fontWithName:self.boldFontName size:20.0f];
+        label.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
         label.textColor = self.onColor;
     
         label.text = section == 1 ? @"You Savings" : @"User Information";
@@ -209,29 +206,38 @@ enum AboutMe {
     NSUInteger row = [indexPath row];
     
     cell.textLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
-    cell.textLabel.font = [UIFont fontWithName:self.boldFontName size:12.0f];
-    cell.detailTextLabel.font = [UIFont fontWithName:self.boldFontName size:20.0f];
+    cell.textLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:12.0f];
+    cell.detailTextLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     cell.detailTextLabel.textColor = self.onColor;
     
     switch (section) {
         case NameSection: {
-            cell.textLabel.font = [UIFont fontWithName:self.boldFontName size:25.0f];
+            cell.textLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:25.0f];
             cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [[PFUser currentUser] objectForKey:@"firstName"],[[PFUser currentUser] objectForKey:@"lastName"]];
             break;
         }
         case SavingsSection: {
             switch (row) {
                 case ReceiptsPending:
-                    if (self.num_of_pending_claims != 0)
+                    if (refreshed)
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%d",self.num_of_pending_claims];
+                    else
+                        cell.detailTextLabel.text = @"-";
+                    
                     break;
                 case AccountBalance:
-                    if (self.account_balance != 0)
+                    if (refreshed)
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.account_balance];
+                    else
+                        cell.detailTextLabel.text = @"-";
+                    
                     break;
                 case TotalSavings:
-                    if (self.total_savings != 0)
+                    if (refreshed)
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f",self.total_savings];
+                    else
+                        cell.detailTextLabel.text = @"-";
+                    
                     break;
                     
                 default:
@@ -266,6 +272,8 @@ enum AboutMe {
 }
 
 -(void)receivedUserInfo:(NSDictionary *)userInfo {
+    refreshed = YES;
+    
     self.num_of_pending_claims = [[userInfo objectForKey:@"num_of_pending_claims"] intValue];
     self.account_balance = [[userInfo objectForKey:@"account_balance"] floatValue];
     self.total_savings = [[userInfo objectForKey:@"total_savings"] floatValue];

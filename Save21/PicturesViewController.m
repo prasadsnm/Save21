@@ -53,38 +53,24 @@
     //Initialize the Singleton imagebox variable
     imageBox = [ImagesBox imageBox];
     
-    //UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    
-    NSString* boldFontName = @"Avenir-Black";
-    
-    self.cancelButton.backgroundColor = darkColor;
+    self.cancelButton.backgroundColor = ApplicationDelegate.darkColor;
     self.cancelButton.layer.cornerRadius = 3.0f;
-    self.cancelButton.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.cancelButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     [self.cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.cancelButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
     
-    self.uploadButton.backgroundColor = darkColor;
+    self.uploadButton.backgroundColor = ApplicationDelegate.darkColor;
     self.uploadButton.layer.cornerRadius = 3.0f;
-    self.uploadButton.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.uploadButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     [self.uploadButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.uploadButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
 
     
     self.titleLabel.textColor =  [UIColor whiteColor];
-    self.titleLabel.font =  [UIFont fontWithName:boldFontName size:24.0f];
+    self.titleLabel.font =  [UIFont fontWithName:ApplicationDelegate.boldFontName size:24.0f];
     
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
-    
-    /*
-    //make sure camera is available
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
-        UIAlertView *alert;
-        alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"This device doesn't have camera. Can only upload via photo library." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];
-    }
-    */
     
     self.actionSheet = [[UIActionSheet alloc] initWithTitle:@"Get Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:TAKE_PHOTO,PICK_PHOTO, nil];
     

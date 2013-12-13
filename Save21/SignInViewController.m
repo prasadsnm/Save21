@@ -31,17 +31,11 @@
     self.logoImage.layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.5f].CGColor;
     self.logoImage.layer.cornerRadius = 55.0f;
     
-    UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
+    self.view.backgroundColor = ApplicationDelegate.mainColor;
     
-    //NSString* fontName = @"Avenir-Book";
-    NSString* boldFontName = @"Avenir-Black";
-    
-    self.view.backgroundColor = mainColor;
-    
-    self.signInButton.backgroundColor = darkColor;
+    self.signInButton.backgroundColor = ApplicationDelegate.darkColor;
     self.signInButton.layer.cornerRadius = 3.0f;
-    self.signInButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
+    self.signInButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     [self.signInButton setTitle:@"SIGN IN HERE" forState:UIControlStateNormal];
     [self.signInButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.signInButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];

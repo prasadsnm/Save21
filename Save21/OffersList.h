@@ -18,4 +18,6 @@
 
 +(OffersList *)offersList;
 
+-(void)emptyBox;
+
 @end

@@ -37,10 +37,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     
-    UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    
-    self.view.backgroundColor = mainColor;
+    self.view.backgroundColor = ApplicationDelegate.mainColor;
     // 设置自身窗口尺寸
 	self.view.frame = CGRectMake(0.0f, 0.0f, kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds));
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
@@ -52,7 +49,7 @@
     [SideMenuUtil setRevealControllerProperty:homeNC revealController:revealController];
     revealController.contentViewController = homeNC;
     
-    self.tableView.backgroundColor = mainColor;
+    self.tableView.backgroundColor = ApplicationDelegate.mainColor;
     self.tableView.separatorColor = [UIColor clearColor];
     
     NSString* fontName = @"Avenir-Black";
@@ -62,7 +59,7 @@
     self.profileNameLabel.font = [UIFont fontWithName:fontName size:14.0f];
     self.profileNameLabel.text = [NSString stringWithFormat:@"%@ %@", [[PFUser currentUser] objectForKey:@"firstName"],[[PFUser currentUser] objectForKey:@"lastName"]];
     
-    self.profileLocationLabel.textColor = darkColor;
+    self.profileLocationLabel.textColor = ApplicationDelegate.darkColor;
     self.profileLocationLabel.font = [UIFont fontWithName:boldFontName size:12.0f];
     self.profileLocationLabel.text = [NSString stringWithFormat:@"%@", [[PFUser currentUser] objectForKey:@"city"]];
     

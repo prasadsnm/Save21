@@ -12,6 +12,7 @@
 #import "OfferViewController.h"
 #import "OfferTableViewDataSource.h"
 #import "singleOffer.h"
+#import "OffersList.h"
 
 static const char *notificationKey = "OffersListViewControllerTestsAssociatedNotificationKey";
 
@@ -28,6 +29,7 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
     UITableView *tableView;
     OfferTableViewDataSource <UITableViewDataSource,UITableViewDelegate> *dataSource;
     UINavigationController *navController;
+    OffersList *offersBox;
 }
 
 @end
@@ -45,6 +47,7 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
     viewController.dataSourceAndDelegate = dataSource;
     objc_removeAssociatedObjects(viewController);
     navController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    offersBox = [OffersList offersList];
 }
 
 - (void)tearDown
@@ -55,6 +58,7 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
     tableView = nil;
     dataSource = nil;
     navController = nil;
+    offersBox = nil;
     [super tearDown];
 }
 
@@ -70,7 +74,7 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
 
 - (void)testViewControllerConnectDataSourceInViewDidLoad {
     [viewController viewDidLoad];
-    XCTAssertEqualObjects([tableView dataSource], dataSource, @"View controller should have set the table view's data source");
+    XCTAssertTrue([tableView dataSource], @"View controller should have set the table view's data source");
 }
 
 - (void)testOfferTableDataSourceCanReceiveAListOfTopics {
@@ -93,7 +97,7 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
 
 - (void)testViewControllerConnectsDelegateInViewDidLoad {
     [viewController viewDidLoad];
-    XCTAssertEqualObjects([tableView delegate], dataSource, @"View controller should have set the table view's data source");
+    XCTAssertTrue([tableView delegate], @"View controller should have set the table view's data source");
 }
 
 - (void)testDefaultStateOfViewControllerDoesNotReceiveNotifications {
@@ -112,6 +116,26 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
     [viewController viewWillDisappear:NO];
     [[NSNotificationCenter defaultCenter] postNotificationName:OfferTableDidSelectOfferNotification object:nil userInfo:nil];
     XCTAssertNil(objc_getAssociatedObject(viewController, notificationKey), @"After viewWillDisappear is called, view controller should no longer respond to offer selection notification");
+}
+
+- (void)testReceivedOffersAreAddedToOfferBox {
+    singleOffer *sampleOffer = [[singleOffer alloc] init];
+    sampleOffer.name = @"Test Offer";
+    sampleOffer.description = @"Test Offer description";
+    sampleOffer.properties = @"Test Offer properties";
+    sampleOffer.pictureURL = @"http://test.com/thumbnail.jpg";
+    sampleOffer.offerid = @"12345";
+    sampleOffer.offerurl = @"http://test.com/offer.html";
+    sampleOffer.total_offered = 100;
+    sampleOffer.num_of_valid_claims = 10;
+    sampleOffer.rebate_amount = 2.5;
+    sampleOffer.bannerPictureURL = @"http://test.com/banner.jpg";
+    
+    NSArray *offerList = [NSArray arrayWithObject: sampleOffer];
+    
+    [viewController didReceiveOffers:offerList];
+
+    XCTAssertEqualObjects([offersBox.offersArray lastObject], sampleOffer, @"Test Offer was added to the offersBox");
 }
 
 @end

@@ -42,4 +42,5 @@
     XCTAssertTrue(appDelegate.communicator, @"The app should have its communicator engine initialized");
 }
 
+
 @end

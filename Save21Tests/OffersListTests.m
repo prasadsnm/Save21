@@ -48,9 +48,15 @@
     XCTAssertEqualObjects([[offerList offersArray] objectAtIndex: 1], @"2", @"List second item should contain the string '2'");
 }
 
+-(void)testAfterEmptyingBoxTheArrayIsEmpty {
+    [offerList emptyBox];
+    XCTAssertEqual([[offerList offersArray] count], (NSUInteger)0, @"The offers list should be 0 after emptying.");
+}
+
 - (void)tearDown
 {
     // Put teardown code here; it will be run once, after the last test case.
+    [offerList emptyBox];
     offerList = nil;
     [super tearDown];
 }

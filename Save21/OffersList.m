@@ -40,5 +40,9 @@
         self.offersArray = receivedOffers;
 }
 
+-(void)emptyBox {
+    self.offersArray = nil;
+}
+
 @end
 

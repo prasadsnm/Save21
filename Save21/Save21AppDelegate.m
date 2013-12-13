@@ -15,6 +15,9 @@
 @synthesize communicator = _communicator;
 @synthesize manager = _manager;
 @synthesize dataSource = _dataSource;
+@synthesize darkColor = _darkColor;
+@synthesize boldFontName = _boldFontName;
+@synthesize mainColor = _mainColor;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -25,10 +28,14 @@
     //track the number of opens
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
+    //init the common colors and fonts throughout the app
+    self.darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
+    self.boldFontName = @"Avenir-Black";
+    self.mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
+
     
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                           darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
+                                                           self.darkColor, NSForegroundColorAttributeName,[UIFont fontWithName:@"Avenir-Black" size:21.0], NSFontAttributeName, nil]];
     
     self.communicator = [[FetchingManagerCommunicator alloc] initWithHostName:WEBSERVICE_URL customHeaderFields:nil];
     self.manager = [[FetchingManager alloc] init];

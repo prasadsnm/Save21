@@ -23,4 +23,9 @@
 
 @property (strong, nonatomic) OfferTableViewDataSource *dataSource;
 
+@property (strong, nonatomic) UIColor* darkColor;
+
+@property (strong, nonatomic) NSString* boldFontName;
+
+@property (strong, nonatomic) UIColor* mainColor;
 @end

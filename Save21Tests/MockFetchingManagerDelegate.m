@@ -15,7 +15,7 @@
 -(void)didReceiveOffers:(NSArray *)offers {
     NSLog(@"Received offers from FetchingManager");
     self.fetchedOffers = offers;
-    NSLog(@"%@",[offers description]);
+    NSLog(@"%@",[self.fetchedOffers description]);
 }
 
 -(void)failedToReceiveOffersWithError:(NSError *)error {

@@ -30,12 +30,9 @@
     //self.navigationItem.leftBarButtonItem=nil;
     //self.navigationItem.hidesBackButton=YES;
     
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    NSString* boldFontName = @"Avenir-Black";
-    
-    self.getStartedButton.backgroundColor = darkColor;
+    self.getStartedButton.backgroundColor = ApplicationDelegate.darkColor;
     self.getStartedButton.layer.cornerRadius = 3.0f;
-    self.getStartedButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
+    self.getStartedButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     [self.getStartedButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.getStartedButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
 }
