@@ -139,18 +139,18 @@
         // Begin login process
         [PFUser logInWithUsernameInBackground:self.emailAddressField.text password:self.passwordField.text
                                         block:^(PFUser *user, NSError *error) {
-                                            if (user) {
-                                                // Do stuff after successful login.
-                                                [self performSegueWithIdentifier:@"login Success" sender:self];
-                                            } else {
-                                                NSString *errorMessage = @"We can't login using these credentials, please verify them and try again.";
+            if (user) {
+                // Do stuff after successful login.
+                [self performSegueWithIdentifier:@"login Success" sender:self];
+            } else {
+                NSString *errorMessage = @"We can't login using these credentials, please verify them and try again.";
 
-                                                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil] show];
-                                            }
+                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:errorMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"Dismiss", nil) otherButtonTitles:nil] show];
+            }
                                             
-                                            [self.loginButton setTitle:@"LOG IN" forState:UIControlStateNormal];
-                                            self.loginButton.enabled = YES;
-                                        }];
+            [self.loginButton setTitle:@"LOG IN" forState:UIControlStateNormal];
+            self.loginButton.enabled = YES;
+        }];
         
     } else {
         

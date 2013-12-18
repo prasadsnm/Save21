@@ -159,11 +159,6 @@
         //clear the imagebox
         [anotherBox emptyBox];
         
-        //increment the user account number of receipts
-        NSLog(@"User Account number of receipts in process incremented");
-        [[PFUser currentUser] incrementKey:@"numberOfReceiptsInProcess"];
-        [[PFUser currentUser] saveInBackground];
-        
 		[self performSegueWithIdentifier:@"Done Uploading" sender:self];
 	} else if ([title isEqualToString:@"Dismiss"]) {
         [self performSegueWithIdentifier:@"Back to PicturesView" sender:self];
@@ -189,6 +184,11 @@
 
 -(void)receivedReceiptID:(NSString *)receiptID{
     NSLog(@"New receiptID is: %@",receiptID);
+    if (!receiptID) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to request a new receipt ID, please click upload to try again." delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+    }
+    
     self.currentReceiptID = receiptID;
 }
 
