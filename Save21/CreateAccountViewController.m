@@ -50,12 +50,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     [self.navigationController setNavigationBarHidden:NO];
-    
-    //UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
      
     NSString* fontName = @"Avenir-Book";
-    NSString* boldFontName = @"Avenir-Black";
      
     //self.view.backgroundColor = mainColor;
     
@@ -67,14 +63,14 @@
     self.cityField.font = [UIFont fontWithName:fontName size:16.0f];
     self.postalField.font = [UIFont fontWithName:fontName size:16.0f];
      
-    self.doneButton.backgroundColor = darkColor;
+    self.doneButton.backgroundColor = ApplicationDelegate.darkColor;
     self.doneButton.layer.cornerRadius = 3.0f;
-    self.doneButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
+    self.doneButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     [self.doneButton setTitle:@"DONE" forState:UIControlStateNormal];
     [self.doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
      
-    self.titleLabel.textColor =  darkColor;
+    self.titleLabel.textColor =  ApplicationDelegate.darkColor;
     self.titleLabel.font =  [UIFont fontWithName:fontName size:14.0f];
     
     [self.firstNameField setDelegate:self];
@@ -268,8 +264,6 @@
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Missing Information", nil) message:NSLocalizedString(@"Make sure you fill out all of the information!", nil) delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil] show];
         return NO;
     }
-    
-    return NO;
 }
 
 - (IBAction)doneButtonPressed {

@@ -14,8 +14,6 @@
     NSUserDefaults *defaults;
 }
 
-@property (nonatomic, strong) NSString* boldFontName;
-
 @property (nonatomic, strong) UIColor* onColor;
 
 @property (nonatomic, strong) UIColor* offColor;
@@ -48,10 +46,16 @@
     [self.navigationController setNavigationBarHidden:NO];
     self.navigationItem.hidesBackButton = YES;
     
-    self.boldFontName = @"Avenir-Black";
+    //create the back button
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *backBtnImage = [UIImage imageNamed:@"Back.png"]  ;
+    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(goback) forControlEvents:UIControlEventTouchUpInside];
+    backBtn.frame = CGRectMake(0, 0, 32, 30);
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backBtn] ;
+    self.navigationItem.leftBarButtonItem = backButton;
     
     self.onColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
     
     self.offColor = [UIColor colorWithRed:242.0/255 green:228.0/255 blue:227.0/255 alpha:1.0];
     
@@ -65,19 +69,24 @@
     self.tableView.separatorColor = [UIColor clearColor];
     
     self.weeklyOfferLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
-    self.weeklyOfferLabel.font = [UIFont fontWithName:self.boldFontName size:12.0f];
+    self.weeklyOfferLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:12.0f];
     
     self.specialOfferLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
-    self.specialOfferLabel.font = [UIFont fontWithName:self.boldFontName size:12.0f];
+    self.specialOfferLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:12.0f];
     
-    self.logoutButton.backgroundColor = darkColor;
+    self.logoutButton.backgroundColor = ApplicationDelegate.darkColor;
     self.logoutButton.layer.cornerRadius = 3.0f;
-    self.logoutButton.titleLabel.font = [UIFont fontWithName:self.boldFontName size:20.0f];
+    self.logoutButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
     [self.logoutButton setTitle:@"LOG OUT" forState:UIControlStateNormal];
     [self.logoutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.logoutButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
     
     defaults = [NSUserDefaults standardUserDefaults];
+}
+
+- (void)goback
+{
+    [self performSegueWithIdentifier:@"backToMenu" sender:self];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -112,8 +121,11 @@
     [defaults synchronize];
 }
 
+//log off and go back to login screen
 - (IBAction)logOutButtonPressed:(UIButton *)sender {
     [PFUser logOut];
+    
+    [self performSegueWithIdentifier:@"backToSignin" sender:self];
 }
 
 -(void)OpenLink:(NSString *)link {
@@ -136,8 +148,8 @@
         
         UILabel* label = [[UILabel alloc] initWithFrame:CGRectMake(30, 9, 200, 40)];
         label.backgroundColor = [UIColor clearColor];
-        label.font = [UIFont fontWithName:self.boldFontName size:20.0f];
-        label.textColor = self.onColor;
+        label.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
+        label.textColor = ApplicationDelegate.darkColor;
         
         label.text = @"Settings";
         
@@ -155,7 +167,7 @@
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     cell.textLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1.0f];
-    cell.textLabel.font = [UIFont fontWithName:self.boldFontName size:12.0f];
+    cell.textLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:12.0f];
     
 }
 

@@ -29,10 +29,10 @@
 
 -(void)awakeFromNib{
     
-    UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
+    UIColor* mainColor = [UIColor colorWithRed:239.0/255 green:55.0/255 blue:52.0/255 alpha:1.0f];
     UIColor* neutralColor = [UIColor colorWithWhite:0.4 alpha:1.0];
     
-    UIColor* mainColorLight = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:0.4f];
+    UIColor* mainColorLight = [UIColor colorWithRed:239.0/255 green:55.0/255 blue:52.0/255 alpha:0.4f];
     UIColor* lightColor = [UIColor colorWithWhite:0.7 alpha:1.0];
     
     NSString* fontName = @"Avenir-Book";

@@ -36,22 +36,20 @@
 
 -(void)awakeFromNib{
     
-    self.mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    self.darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
+    self.mainColor = [UIColor colorWithRed:255.0/255 green:88.0/255 blue:85.0/255 alpha:1.0f];
+    self.darkColor = [UIColor colorWithRed:239.0/255 green:55.0/255 blue:52.0/255 alpha:1.0f];
     
     self.bgView.backgroundColor = self.mainColor;
     
     self.topSeparator.backgroundColor = [UIColor clearColor];
     self.bottomSeparator.backgroundColor = [UIColor colorWithWhite:0.9f alpha:0.2f];
     
-    NSString* boldFontName = @"Avenir-Black";
-    
     self.titleLabel.textColor = [UIColor whiteColor];
-    self.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     
     self.countLabel.textColor = [UIColor whiteColor];
     self.countLabel.backgroundColor = self.mainColor;
-    self.countLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.countLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     
     self.countLabel.layer.cornerRadius = 3.0f;
 }

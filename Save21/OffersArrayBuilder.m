@@ -28,8 +28,6 @@
     
     NSMutableArray *offers = [[NSMutableArray alloc] init];
     
-    NSLog(@"Count %d", results.count);
-    
     for (NSDictionary *offerDic in results) {
         singleOffer *offer = [[singleOffer alloc] init];
         

@@ -9,19 +9,21 @@
 #import "PicturesViewController.h"
 #import "PhotoCell.h"
 #import "ImagesBox.h"
-#import "KGModal.h"
+#import "CameraOverlay.h"
 
 @interface PicturesViewController () <UIActionSheetDelegate> {
     ImagesBox *imageBox;
 }
 
+@property (weak, nonatomic) IBOutlet UIImageView *helpPictureGuide;
+
 @property (strong,nonatomic) UIImagePickerController *imagePicker;
+@property (strong,nonatomic) CameraOverlay *overlayView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *uploadButton;
 @property (strong, nonatomic) UIActionSheet *actionSheet;
 @property (weak, nonatomic) IBOutlet UIButton *cameraButton;
-@property BOOL helpDialogShown;
 
 #define TAKE_PHOTO @"Take Photo"
 #define PICK_PHOTO @"Pick from Library"
@@ -29,7 +31,9 @@
 @end
 
 @implementation PicturesViewController
+@synthesize helpPictureGuide = _helpPictureGuide;
 @synthesize imagePicker = _imagePicker;
+@synthesize overlayView = _overlayView;
 @synthesize collectionView = _collectionView;
 @synthesize cancelButton = _cancelButton;
 @synthesize uploadButton = _uploadButton;
@@ -53,79 +57,37 @@
     //Initialize the Singleton imagebox variable
     imageBox = [ImagesBox imageBox];
     
-    //UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    
-    NSString* boldFontName = @"Avenir-Black";
-    
-    self.cancelButton.backgroundColor = darkColor;
+    self.cancelButton.backgroundColor = ApplicationDelegate.darkColor;
     self.cancelButton.layer.cornerRadius = 3.0f;
-    self.cancelButton.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.cancelButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     [self.cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.cancelButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
     
-    self.uploadButton.backgroundColor = darkColor;
+    self.uploadButton.backgroundColor = ApplicationDelegate.darkColor;
     self.uploadButton.layer.cornerRadius = 3.0f;
-    self.uploadButton.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.uploadButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     [self.uploadButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.uploadButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
 
     
-    self.titleLabel.textColor =  [UIColor whiteColor];
-    self.titleLabel.font =  [UIFont fontWithName:boldFontName size:24.0f];
+    self.titleLabel.textColor = ApplicationDelegate.darkColor;
+    self.titleLabel.font =  [UIFont fontWithName:ApplicationDelegate.boldFontName size:24.0f];
     
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
     
-    /*
-    //make sure camera is available
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
-        UIAlertView *alert;
-        alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"This device doesn't have camera. Can only upload via photo library." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];
-    }
-    */
-    
     self.actionSheet = [[UIActionSheet alloc] initWithTitle:@"Get Photo" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:TAKE_PHOTO,PICK_PHOTO, nil];
-    
-    if (!self.helpDialogShown)
-        [self showWelcomeMessage];
 }
 
--(void)showWelcomeMessage {
-    //show welcome message using KGModal
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 280, 150)];
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
-    CGRect welcomeLabelRect = contentView.bounds;
-    welcomeLabelRect.origin.y = 20;
-    welcomeLabelRect.size.height = 20;
-    UIFont *welcomeLabelFont = [UIFont boldSystemFontOfSize:17];
-    UILabel *welcomeLabel = [[UILabel alloc] initWithFrame:welcomeLabelRect];
-    welcomeLabel.text = @"Take Picture";
-    welcomeLabel.font = welcomeLabelFont;
-    welcomeLabel.textColor = [UIColor whiteColor];
-    welcomeLabel.textAlignment = NSTextAlignmentCenter;
-    welcomeLabel.backgroundColor = [UIColor clearColor];
-    welcomeLabel.shadowColor = [UIColor blackColor];
-    welcomeLabel.shadowOffset = CGSizeMake(0, 1);
-    [contentView addSubview:welcomeLabel];
-    
-    CGRect infoLabelRect = CGRectInset(contentView.bounds, 5, 5);
-    infoLabelRect.origin.y = CGRectGetMaxY(welcomeLabelRect)+5;
-    infoLabelRect.size.height -= CGRectGetMinY(infoLabelRect);
-    UILabel *infoLabel = [[UILabel alloc] initWithFrame:infoLabelRect];
-    infoLabel.text = @"Click the camera button on the bottom to start taking pictures of your receipts that you wish to upload.";
-    infoLabel.numberOfLines = 4;
-    infoLabel.textColor = [UIColor whiteColor];
-    infoLabel.textAlignment = NSTextAlignmentCenter;
-    infoLabel.backgroundColor = [UIColor clearColor];
-    infoLabel.shadowColor = [UIColor blackColor];
-    infoLabel.shadowOffset = CGSizeMake(0, 1);
-    [contentView addSubview:infoLabel];
-    
-    [[KGModal sharedInstance] showWithContentView:contentView andAnimated:YES];
-    
-    self.helpDialogShown = YES;
+    //show or hide the picture guide
+    if (imageBox.imageArray.count == 0) {
+        [self.helpPictureGuide setHidden:NO];
+    } else {
+        [self.helpPictureGuide setHidden:YES];
+    }
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -146,7 +108,7 @@
     NSData *image = imageBox.imageArray[indexPath.row];
     cell.image = [UIImage imageWithData:image];
     
-    cell.backgroundColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
+    cell.backgroundColor = [UIColor whiteColor];
     
     [cell.deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -169,16 +131,17 @@
 }
 
 - (IBAction)cameraButtonPressed {
-    if (self.imagePicker == nil) {
-        self.imagePicker = [[UIImagePickerController alloc] init];
-    }
-    // If our device has a camera, give the user the options to take a picture or pick from photo library
+        // If our device has a camera, give the user the options to take a picture or pick from photo library
     //otherwise, just go straight to picking from photo library
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         //show the action sheet
         [self.actionSheet showInView:self.view];
 
     } else { //go straight to picking from photo library
+        if (self.imagePicker == nil) {
+            self.imagePicker = [[UIImagePickerController alloc] init];
+        }
+        
         [self.imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         
         [self.imagePicker setDelegate:self];
@@ -192,15 +155,34 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString *choice = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if (self.imagePicker == nil) {
+        self.imagePicker = [[UIImagePickerController alloc] init];
+    }
+    
     if ([choice isEqualToString:TAKE_PHOTO]) {
         [self.imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
         [self.imagePicker setDelegate:self];
+        
+        if (!self.overlayView)
+            self.overlayView = [[CameraOverlay alloc] initWithNibName:@"CameraOverlay" bundle:nil];
+        
+        //create overlayView
+        if (IsIphone5) {
+            [self.overlayView.overlayImage setImage:[UIImage imageNamed:@"overlay_iphone5.png"]];
+        } else {
+            [self.overlayView.overlayImage setImage:[UIImage imageNamed:@"overlay_iphone4.png"]];
+        }
+        
         self.imagePicker.cameraFlashMode =UIImagePickerControllerCameraFlashModeOff;
-        self.imagePicker.allowsEditing = NO;
+        self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+        self.imagePicker.allowsEditing = YES;
+        self.imagePicker.showsCameraControls = YES;
+        self.imagePicker.cameraOverlayView = self.overlayView.view;
         
         [self presentViewController:self.imagePicker animated:YES completion:^{
             //code
         }];
+        
     } else if ([choice isEqualToString:PICK_PHOTO]) {
         [self.imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         
@@ -220,6 +202,11 @@
     [imageBox.imageArray removeObjectAtIndex:indexPath.row];
     
     [self.collectionView deleteItemsAtIndexPaths:[NSArray arrayWithObject:indexPath]];
+    
+    if (imageBox.imageArray.count == 0) {
+        //show the picture guide
+        [self.helpPictureGuide setHidden:NO];
+    }
 }
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -252,6 +239,9 @@
         ////////////////////////////////////////////////////////////////////
         
         NSData *imageData = UIImageJPEGRepresentation(img, 0.7);
+        
+        //hide the picture guide
+        [self.helpPictureGuide setHidden:YES];
         
         //add the image to singleton imagebox
         [imageBox addImage:imageData];

@@ -22,6 +22,7 @@
     OffersList *anotherOfferBox;
     BOOL addingToreceipts_and_offers_tableSuccess;
 }
+
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITableView *offersListTable;
 @property (weak, nonatomic) OfferTableViewDataSource *dataSourceAndDelegate;
@@ -47,6 +48,7 @@
 	// Do any additional setup after loading the view.
     
     [self.navigationController setNavigationBarHidden:YES];
+    self.view.backgroundColor = [UIColor whiteColor];
     
     self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
     self.HUD.labelText = @"Please wait";
@@ -56,24 +58,20 @@
     
     [self.view addSubview:self.HUD];
     
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
-    
-    NSString* boldFontName = @"Avenir-Black";
-    
-    self.backButton.backgroundColor = darkColor;
+    self.backButton.backgroundColor = ApplicationDelegate.darkColor;
     self.backButton.layer.cornerRadius = 3.0f;
-    self.backButton.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.backButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     [self.backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.backButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
     
-    self.doneButton.backgroundColor = darkColor;
+    self.doneButton.backgroundColor = ApplicationDelegate.darkColor;
     self.doneButton.layer.cornerRadius = 3.0f;
-    self.doneButton.titleLabel.font = [UIFont fontWithName:boldFontName size:14.0f];
+    self.doneButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:14.0f];
     [self.doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.doneButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
     
-    self.titleLabel.textColor =  [UIColor whiteColor];
-    self.titleLabel.font =  [UIFont fontWithName:boldFontName size:24.0f];
+    self.titleLabel.textColor =  ApplicationDelegate.darkColor;
+    self.titleLabel.font =  [UIFont fontWithName:ApplicationDelegate.boldFontName size:24.0f];
     
     //Link the communicator to the appdelegate's communicator
     self.communicatorEngine = ApplicationDelegate.communicator;
@@ -140,6 +138,7 @@
 - (IBAction)doneButtonPressed:(UIButton *)sender {
     //be sure the user has selected at least one offer
     if ([self.dataSourceAndDelegate DictionaryOfSelectedOfferIDs].count){
+        
         //don't let user click it twice
         [self.doneButton setEnabled:NO];
         
@@ -154,7 +153,6 @@
     }
 }
 
-
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
@@ -162,11 +160,6 @@
 	{
         //clear the imagebox
         [anotherBox emptyBox];
-        
-        //increment the user account number of receipts
-        NSLog(@"User Account number of receipts in process incremented");
-        [[PFUser currentUser] incrementKey:@"numberOfReceiptsInProcess"];
-        [[PFUser currentUser] saveInBackground];
         
 		[self performSegueWithIdentifier:@"Done Uploading" sender:self];
 	} else if ([title isEqualToString:@"Dismiss"]) {
@@ -192,6 +185,11 @@
 }
 
 -(void)receivedReceiptID:(NSString *)receiptID{
+    //some times the server gives out a null json, if that happens, just request again,
+    //that should fix it
+    if (!receiptID)
+        [self requestReceiptID];
+    
     NSLog(@"New receiptID is: %@",receiptID);
     self.currentReceiptID = receiptID;
 }

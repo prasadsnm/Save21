@@ -23,8 +23,6 @@
 -(id)initWithNameArr:(NSMutableArray *)imageArr titleArr:(NSMutableArray *)titleArr height:(float)heightValue{
     self=[super initWithFrame:CGRectMake(0, 0, WIDTH, heightValue)];
     if (self) {
-        page=0;//设置当前页为1
-        
         imageNameArr = imageArr;
         titleStrArr=titleArr;
         //图片总数
@@ -43,6 +41,9 @@
         imageSV.bounces = NO;//don't let user scroll to white space
         
         imageSV.delegate = self;
+        
+        //random page at start
+        page = [self getRandomNumberBetween:0 to: imageNameArr.count - 1];
         
         CGSize newSize = CGSizeMake(WIDTH * imageCount,  imageSV.frame.size.height);//设置scrollview的大小
         [imageSV setContentSize:newSize];
@@ -69,10 +70,18 @@
     }
     return self;
 }
+
+-(int)getRandomNumberBetween:(int)from to:(int)to {
+    
+    return (int)from + arc4random() % (to-from+1);
+}
+
+
 //NSTimer方法
 -(void)changeView
 {
-    //修改页码
+    //sequential automatic scrolling
+    /*
     if (page == 0) {
         switchDirection = rightDirection;
     }else if(page == imageNameArr.count-1){
@@ -83,13 +92,11 @@
     }else if (switchDirection == leftDirection){
         page --;
     }
+    */
+    
+    //random automatic scrolling
+    page = [self getRandomNumberBetween:0 to: imageNameArr.count - 1];
 
-    //page++;
-//    //判断是否大于上线
-//    if (page==imageNameArr.count) {
-//        //重置页码
-//        page=0;
-//    }
     //设置滚动到第几页
     [imageSV setContentOffset:CGPointMake(WIDTH*page, 0) animated:YES];
     

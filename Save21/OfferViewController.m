@@ -60,9 +60,20 @@ static inline Reachability* defaultReachability () {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.connected = YES;
     
 	// Do any additional setup after loading the view.
+    self.connected = YES;
+    self.view.backgroundColor = ApplicationDelegate.darkColor;
+    
+    //create the back button
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *backBtnImage = [UIImage imageNamed:@"Back.png"]  ;
+    [backBtn setBackgroundImage:backBtnImage forState:UIControlStateNormal];
+    [backBtn addTarget:self action:@selector(goback) forControlEvents:UIControlEventTouchUpInside];
+    backBtn.frame = CGRectMake(0, 0, 32, 30);
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithCustomView:backBtn] ;
+    self.navigationItem.leftBarButtonItem = backButton;
+    
     self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
     self.HUD.labelText = @"Please wait";
     self.HUD.detailsLabelText = @"Downloading offer details...";
@@ -84,6 +95,10 @@ static inline Reachability* defaultReachability () {
     self.communicatorEngine.delegate = self;
 }
 
+- (void)goback
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     NSLog(@"FAIL TO LOAD WEB ARCHIVE");

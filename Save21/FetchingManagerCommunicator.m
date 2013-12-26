@@ -31,6 +31,9 @@
     fileToDownloadURL = remoteURL;
     filePathToDownloadTo = filePath;
     
+    fileToDownloadURL = [fileToDownloadURL stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    filePathToDownloadTo = [filePathToDownloadTo stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    
     MKNetworkOperation *op = [self operationWithURLString:remoteURL];
     
     [op addDownloadStream:[NSOutputStream outputStreamToFileAtPath:filePath

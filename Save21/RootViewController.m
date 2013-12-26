@@ -29,11 +29,8 @@
 	// Do any additional setup after loading the view, typically from a nib.
     
     [self.navigationController setNavigationBarHidden:YES];
-    
-    self.imageLogo.clipsToBounds = YES;
-    self.imageLogo.layer.borderWidth = 4.0f;
-    self.imageLogo.layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.5f].CGColor;
-    self.imageLogo.layer.cornerRadius = 55.0f;
+     
+    self.view.backgroundColor = [UIColor whiteColor];
     
     [self.activityIndicator startAnimating];
     

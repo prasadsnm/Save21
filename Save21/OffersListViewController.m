@@ -68,9 +68,12 @@ static inline Reachability* defaultReachability () {
     [super viewDidLoad];
     
 	// Do any additional setup after loading the view.
+    connected = YES;
+    
     [self.navigationController setNavigationBarHidden:NO];
     self.navigationItem.hidesBackButton = YES;
-    connected = YES;
+    self.navigationController.navigationBar.barTintColor = ApplicationDelegate.darkColor;
+    self.view.backgroundColor = ApplicationDelegate.darkColor;
     
     //initialize the slider bar menu button
     UIButton* menuButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 28, 20)];
@@ -216,7 +219,7 @@ static inline Reachability* defaultReachability () {
     arrayOfBannersTitles = [[NSMutableArray alloc] init];
     arrayOfBannersOfferIDs = [[NSMutableArray alloc] init];
     arrayOfBannersOfferURLs = [[NSMutableArray alloc] init];
-    
+
     for (singleOffer *offer in offersBox.offersArray) {
         if ([offer.properties isEqualToString:@"banner"]) {
             [arrayOfBannersImageURLs addObject:[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]];
@@ -227,18 +230,22 @@ static inline Reachability* defaultReachability () {
         //NSLog(@"%@",[NSString stringWithFormat:@"%@%@", IMAGE_FOLDER_URL, offer.bannerPictureURL]);
     }
     
-    //remove the old scroll view if it exists
-    if ([self.scrollPictureView isKindOfClass:[AOScrollerView class]]) {
-        [self.scrollPictureView removeFromSuperview];
+    //only add the banner bar if any banner offers exist
+    if (arrayOfBannersTitles.count > 0) {
+        //remove the old scroll view if it exists
+        if ([self.scrollPictureView isKindOfClass:[AOScrollerView class]]) {
+            [self.scrollPictureView removeFromSuperview];
+        }
+    
+        //initialize the banner view
+        self.scrollPictureView = [[AOScrollerView alloc]initWithNameArr:arrayOfBannersImageURLs titleArr:arrayOfBannersTitles height:150];
+    
+        self.scrollPictureView.vDelegate=self;
+    
+        //add banner to top of table
+        self.offersListTable.tableHeaderView = self.scrollPictureView;
+    
     }
-    
-    //initialize the banner view
-    self.scrollPictureView = [[AOScrollerView alloc]initWithNameArr:arrayOfBannersImageURLs titleArr:arrayOfBannersTitles height:150];
-    
-    self.scrollPictureView.vDelegate=self;
-    
-    //add banner to top of table
-    self.offersListTable.tableHeaderView = self.scrollPictureView;
     
     //hide the waiting pop up
     [HUD hide:YES];

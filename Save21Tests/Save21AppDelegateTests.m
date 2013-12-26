@@ -7,10 +7,10 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Save21AppDelegate.h"
+#import "CraveAppDelegate.h"
 
 @interface Save21AppDelegateTests : XCTestCase {
-    Save21AppDelegate *appDelegate;
+    CraveAppDelegate *appDelegate;
     BOOL didFinishLaunchingWithOptionsReturn;
     
 }
@@ -23,7 +23,7 @@
 {
     [super setUp];
     // Put setup code here; it will be run once, before the first test case.
-    appDelegate = [[Save21AppDelegate alloc] init];
+    appDelegate = [[CraveAppDelegate alloc] init];
     didFinishLaunchingWithOptionsReturn = [appDelegate application: nil didFinishLaunchingWithOptions: nil];
 }
 

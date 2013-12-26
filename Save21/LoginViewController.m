@@ -11,18 +11,14 @@
 @interface LoginViewController ()
 
 @property (weak, nonatomic) IBOutlet UITextField *emailAddressField;
-
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
-
 @property (nonatomic, weak) IBOutlet UIButton *loginButton;
-
 @property (nonatomic, weak) IBOutlet UIButton *forgotButton;
-
-@property (nonatomic, weak) IBOutlet UILabel *titleLabel;
-
-@property (nonatomic, weak) IBOutlet UILabel *subTitleLabel;
+@property (weak, nonatomic) IBOutlet UIButton *signUpButton;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *logoConstraint;
+
 
 @end
 
@@ -31,10 +27,9 @@
 @synthesize passwordField = _passwordField;
 @synthesize loginButton = _loginButton;
 @synthesize forgotButton = _forgotButton;
-@synthesize titleLabel = _titleLabel;
-@synthesize subTitleLabel = _subTitleLabel;
+@synthesize signUpButton = _signUpButton;
 
-#define kOFFSET_FOR_KEYBOARD 80.0
+#define kOFFSET_FOR_KEYBOARD 85.0
 
 - (void)viewDidLoad
 {
@@ -42,73 +37,68 @@
 	// Do any additional setup after loading the view.
     [self.navigationController setNavigationBarHidden:NO];
     
+    UIColor* bgColor = [UIColor whiteColor];
+    UIColor* textFieldColor = ApplicationDelegate.textfieldColor;
+    
     self.navigationItem.leftBarButtonItem=nil;
     self.navigationItem.hidesBackButton=YES;
+    self.navigationController.navigationBar.barTintColor = ApplicationDelegate.darkColor;
     
-    UIColor* mainColor = [UIColor colorWithRed:28.0/255 green:158.0/255 blue:121.0/255 alpha:1.0f];
-    UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
     
     NSString* fontName = @"Avenir-Book";
-    NSString* boldFontName = @"Avenir-Black";
     
-    self.view.backgroundColor = mainColor;
+    self.view.backgroundColor = bgColor;
     
-    self.emailAddressField.backgroundColor = [UIColor whiteColor];
+    self.emailAddressField.backgroundColor = textFieldColor;
     self.emailAddressField.layer.cornerRadius = 3.0f;
-    self.emailAddressField.placeholder = @"Email Address";
+    self.emailAddressField.placeholder = @"Your email address";
     self.emailAddressField.font = [UIFont fontWithName:fontName size:16.0f];
     
     
-    UIImageView* usernameIconImage = [[UIImageView alloc] initWithFrame:CGRectMake(9, 9, 24, 24)];
-    usernameIconImage.image = [UIImage imageNamed:@"mail"];
+    UIImageView* usernameIconImage = [[UIImageView alloc] initWithFrame:CGRectMake(9.5, 15, 22.2, 13.4)];
+    usernameIconImage.image = [UIImage imageNamed:@"Email Login Icon"];
     UIView* usernameIconContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 41, 41)];
-    usernameIconContainer.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
+    usernameIconContainer.backgroundColor = ApplicationDelegate.darkColor;
     [usernameIconContainer addSubview:usernameIconImage];
     
     self.emailAddressField.leftViewMode = UITextFieldViewModeAlways;
     self.emailAddressField.leftView = usernameIconContainer;
     
-    
-    self.passwordField.backgroundColor = [UIColor whiteColor];
+    self.passwordField.backgroundColor = textFieldColor;
     self.passwordField.layer.cornerRadius = 3.0f;
     self.passwordField.placeholder = @"Password";
     self.passwordField.font = [UIFont fontWithName:fontName size:16.0f];
     
-    
-    UIImageView* passwordIconImage = [[UIImageView alloc] initWithFrame:CGRectMake(9, 9, 24, 24)];
-    passwordIconImage.image = [UIImage imageNamed:@"lock"];
+    UIImageView* passwordIconImage = [[UIImageView alloc] initWithFrame:CGRectMake(9.5, 12, 24, 14)];
+    passwordIconImage.image = [UIImage imageNamed:@"Password Login Icon"];
     UIView* passwordIconContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 41, 41)];
-    passwordIconContainer.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
+    passwordIconContainer.backgroundColor = ApplicationDelegate.darkColor;
     [passwordIconContainer addSubview:passwordIconImage];
     
     self.passwordField.leftViewMode = UITextFieldViewModeAlways;
     self.passwordField.leftView = passwordIconContainer;
     
-    self.loginButton.backgroundColor = darkColor;
+    self.loginButton.backgroundColor = ApplicationDelegate.darkColor;
     self.loginButton.layer.cornerRadius = 3.0f;
-    self.loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
-    [self.loginButton setTitle:@"LOG IN" forState:UIControlStateNormal];
+    self.loginButton.titleLabel.font = [UIFont fontWithName:ApplicationDelegate.boldFontName size:20.0f];
+    [self.loginButton setTitle:@"Login" forState:UIControlStateNormal];
     [self.loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.loginButton setTitleColor:[UIColor colorWithWhite:1.0f alpha:0.5f] forState:UIControlStateHighlighted];
     
     self.forgotButton.backgroundColor = [UIColor clearColor];
     self.forgotButton.titleLabel.font = [UIFont fontWithName:fontName size:12.0f];
     [self.forgotButton setTitle:@"Forgot Password?" forState:UIControlStateNormal];
-    [self.forgotButton setTitleColor:darkColor forState:UIControlStateNormal];
+    [self.forgotButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [self.forgotButton setTitleColor:[UIColor colorWithWhite:1.0 alpha:0.5] forState:UIControlStateHighlighted];
-    
-    self.titleLabel.textColor =  [UIColor whiteColor];
-    self.titleLabel.font =  [UIFont fontWithName:boldFontName size:24.0f];
-    self.titleLabel.text = @"GOOD TO SEE YOU";
-    
-    self.subTitleLabel.textColor =  [UIColor whiteColor];
-    self.subTitleLabel.font =  [UIFont fontWithName:fontName size:14.0f];
-    self.subTitleLabel.text = @"Welcome back, please login below";
     
     self.emailAddressField.delegate = self;
     self.passwordField.delegate = self;
     
     self.passwordField.secureTextEntry = YES;
+}
+
+- (IBAction)signUpButtonPressed:(UIButton *)sender {
+    [self performSegueWithIdentifier:@"goToSignup" sender:self];
 }
 
 //when the user finish editing a text field, push the view down back to normal
@@ -214,13 +204,22 @@
 }
 
 -(void)pushUp {
-    self.buttonConstraint.constant = 55 + kOFFSET_FOR_KEYBOARD;
+    //push the logo up only on 3.5" iphones
+    if (!IsIphone5) {
+        self.logoConstraint.constant = 13 - kOFFSET_FOR_KEYBOARD;
+    }
+    
+    self.buttonConstraint.constant = 25 + kOFFSET_FOR_KEYBOARD;
     
     [self animateConstraints];
 }
 
 -(void)pushDown {
-    self.buttonConstraint.constant = 55;
+    if (!IsIphone5) {
+        self.logoConstraint.constant = 13;
+    }
+    
+    self.buttonConstraint.constant = 10;
     
     [self animateConstraints];
 }
