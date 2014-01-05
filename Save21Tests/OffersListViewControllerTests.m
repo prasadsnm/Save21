@@ -68,11 +68,6 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
     XCTAssertTrue(dataSourceProperty != NULL, @"OffersListViewController needs a data source");
 }
 
-- (void)testViewControllerConnectDataSourceInViewDidLoad {
-    [viewController viewDidLoad];
-    XCTAssertEqualObjects([tableView dataSource], dataSource, @"View controller should have set the table view's data source");
-}
-
 - (void)testOfferTableDataSourceCanReceiveAListOfTopics {
     OfferTableViewDataSource *dataSource = [[OfferTableViewDataSource alloc] init];
     singleOffer *sampleOffer = [[singleOffer alloc] init];
@@ -89,11 +84,6 @@ static const char *notificationKey = "OffersListViewControllerTestsAssociatedNot
     
     NSArray *offerList = [NSArray arrayWithObject: sampleOffer];
     XCTAssertNoThrow([dataSource setOffers: offerList], @"The data source needs a list of topics");
-}
-
-- (void)testViewControllerConnectsDelegateInViewDidLoad {
-    [viewController viewDidLoad];
-    XCTAssertEqualObjects([tableView delegate], dataSource, @"View controller should have set the table view's data source");
 }
 
 - (void)testDefaultStateOfViewControllerDoesNotReceiveNotifications {

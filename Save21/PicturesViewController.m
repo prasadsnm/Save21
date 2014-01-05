@@ -175,7 +175,7 @@
         
         self.imagePicker.cameraFlashMode =UIImagePickerControllerCameraFlashModeOff;
         self.imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-        self.imagePicker.allowsEditing = YES;
+        self.imagePicker.allowsEditing = NO;
         self.imagePicker.showsCameraControls = YES;
         self.imagePicker.cameraOverlayView = self.overlayView.view;
         

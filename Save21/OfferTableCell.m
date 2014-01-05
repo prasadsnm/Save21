@@ -46,10 +46,10 @@
     self.updateLabel.font =  [UIFont fontWithName:fontName size:12.0f];
     
     self.dateLabel.textColor = lightColor;
-    self.dateLabel.font =  [UIFont fontWithName:boldItalicFontName size:8.0f];
+    self.dateLabel.font =  [UIFont fontWithName:boldItalicFontName size:10.0f];
     
     self.commentCountLabel.textColor = mainColorLight;
-    self.commentCountLabel.font =  [UIFont fontWithName:boldItalicFontName size:10.0f];
+    self.commentCountLabel.font =  [UIFont fontWithName:boldItalicFontName size:12.0f];
     
     //self.likeCountLabel.textColor = mainColorLight;
     //self.likeCountLabel.font =  [UIFont fontWithName:boldItalicFontName size:10.0f];

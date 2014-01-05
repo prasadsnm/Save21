@@ -60,7 +60,7 @@ NSString *offerCellReuseIdentifier = @"offerCell";
         if ( ( currentOffer.total_offered - currentOffer.num_of_valid_claims ) < 1 )
             offerCell.dateLabel.text = @"SOLD OUT";
         else
-            offerCell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %d",(currentOffer.total_offered - currentOffer.num_of_valid_claims )];
+            offerCell.dateLabel.text = [NSString stringWithFormat:@"Remaining: %ld",(currentOffer.total_offered - currentOffer.num_of_valid_claims )];
     }
     
     //draw check mark on selected cell

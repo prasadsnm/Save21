@@ -7,7 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2202CC8A185A6B1A0031B19D /* Load Screen Logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 2202CC89185A6B1A0031B19D /* Load Screen Logo.png */; };
+		22008CD5187997EB00468F4F /* Icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CC5187997EA00468F4F /* Icon-40.png */; };
+		22008CD6187997EB00468F4F /* Icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CC6187997EA00468F4F /* Icon-40@2x.png */; };
+		22008CD7187997EB00468F4F /* Icon-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CC7187997EA00468F4F /* Icon-60.png */; };
+		22008CD8187997EB00468F4F /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CC8187997EB00468F4F /* Icon-60@2x.png */; };
+		22008CD9187997EB00468F4F /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CC9187997EB00468F4F /* Icon-72.png */; };
+		22008CDA187997EB00468F4F /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CCA187997EB00468F4F /* Icon-72@2x.png */; };
+		22008CDB187997EB00468F4F /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CCB187997EB00468F4F /* Icon-76.png */; };
+		22008CDC187997EB00468F4F /* Icon-76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CCC187997EB00468F4F /* Icon-76@2x.png */; };
+		22008CDD187997EB00468F4F /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CCD187997EB00468F4F /* Icon-Small-50.png */; };
+		22008CDE187997EB00468F4F /* Icon-Small-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CCE187997EB00468F4F /* Icon-Small-50@2x.png */; };
+		22008CDF187997EB00468F4F /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CCF187997EB00468F4F /* Icon-Small.png */; };
+		22008CE0187997EB00468F4F /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CD0187997EB00468F4F /* Icon-Small@2x.png */; };
+		22008CE1187997EB00468F4F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CD1187997EB00468F4F /* Icon.png */; };
+		22008CE2187997EB00468F4F /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CD2187997EB00468F4F /* Icon@2x.png */; };
+		22008CE3187997EB00468F4F /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CD3187997EB00468F4F /* iTunesArtwork.png */; };
+		22008CE4187997EB00468F4F /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22008CD4187997EB00468F4F /* iTunesArtwork@2x.png */; };
+		22008CE6187999C800468F4F /* Crave-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22008CE5187999C800468F4F /* Crave-Info.plist */; };
+		22008CE818799A7600468F4F /* Save21Tests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22008CE718799A7600468F4F /* Save21Tests-Info.plist */; };
 		2202CC8C185A74340031B19D /* Camera Button.png in Resources */ = {isa = PBXBuildFile; fileRef = 2202CC8B185A74340031B19D /* Camera Button.png */; };
 		2202CC8F185A76060031B19D /* Email Login Icon in Resources */ = {isa = PBXBuildFile; fileRef = 2202CC8D185A76060031B19D /* Email Login Icon */; };
 		2202CC90185A76060031B19D /* Password Login Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2202CC8E185A76060031B19D /* Password Login Icon.png */; };
@@ -140,8 +157,8 @@
 		22A600B018692218008B18BD /* Sign Up.png in Resources */ = {isa = PBXBuildFile; fileRef = 22A600AF18692218008B18BD /* Sign Up.png */; };
 		22A600CE186BEA15008B18BD /* CameraOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 22A600CC186BEA15008B18BD /* CameraOverlay.m */; };
 		22A600CF186BEA15008B18BD /* CameraOverlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22A600CD186BEA15008B18BD /* CameraOverlay.xib */; };
-		22A600D2186BEEA7008B18BD /* overlay_iphone4.png in Resources */ = {isa = PBXBuildFile; fileRef = 22A600D0186BEEA7008B18BD /* overlay_iphone4.png */; };
-		22A600D3186BEEA7008B18BD /* overlay_iphone5.png in Resources */ = {isa = PBXBuildFile; fileRef = 22A600D1186BEEA7008B18BD /* overlay_iphone5.png */; };
+		22C054AC187990D800848A1A /* overlay_iphone5.png in Resources */ = {isa = PBXBuildFile; fileRef = 22C054AB187990D800848A1A /* overlay_iphone5.png */; };
+		22C054AE1879919600848A1A /* overlay_iphone4.png in Resources */ = {isa = PBXBuildFile; fileRef = 22C054AD1879919600848A1A /* overlay_iphone4.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,7 +172,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2202CC89185A6B1A0031B19D /* Load Screen Logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Load Screen Logo.png"; sourceTree = "<group>"; };
+		22008CC5187997EA00468F4F /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40.png"; sourceTree = "<group>"; };
+		22008CC6187997EA00468F4F /* Icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@2x.png"; sourceTree = "<group>"; };
+		22008CC7187997EA00468F4F /* Icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60.png"; sourceTree = "<group>"; };
+		22008CC8187997EB00468F4F /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
+		22008CC9187997EB00468F4F /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		22008CCA187997EB00468F4F /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
+		22008CCB187997EB00468F4F /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
+		22008CCC187997EB00468F4F /* Icon-76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76@2x.png"; sourceTree = "<group>"; };
+		22008CCD187997EB00468F4F /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
+		22008CCE187997EB00468F4F /* Icon-Small-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50@2x.png"; sourceTree = "<group>"; };
+		22008CCF187997EB00468F4F /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
+		22008CD0187997EB00468F4F /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@2x.png"; sourceTree = "<group>"; };
+		22008CD1187997EB00468F4F /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		22008CD2187997EB00468F4F /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		22008CD3187997EB00468F4F /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
+		22008CD4187997EB00468F4F /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
+		22008CE5187999C800468F4F /* Crave-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Crave-Info.plist"; sourceTree = "<group>"; };
+		22008CE718799A7600468F4F /* Save21Tests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Save21Tests-Info.plist"; sourceTree = "<group>"; };
 		2202CC8B185A74340031B19D /* Camera Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Camera Button.png"; sourceTree = "<group>"; };
 		2202CC8D185A76060031B19D /* Email Login Icon */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Email Login Icon"; sourceTree = "<group>"; };
 		2202CC8E185A76060031B19D /* Password Login Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Password Login Icon.png"; sourceTree = "<group>"; };
@@ -172,18 +206,18 @@
 		22160F851854419D002F0546 /* MockCommunicatorDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockCommunicatorDelegate.m; sourceTree = "<group>"; };
 		22160F8718545AAE002F0546 /* MockFetchingManagerCommunicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockFetchingManagerCommunicator.h; sourceTree = "<group>"; };
 		22160F8818545AAE002F0546 /* MockFetchingManagerCommunicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockFetchingManagerCommunicator.m; sourceTree = "<group>"; };
-		2243AD0E1820992A00619ECB /* Crave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Crave.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2243AD0E1820992A00619ECB /* Save21.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Save21.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2243AD111820992A00619ECB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2243AD131820992A00619ECB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2243AD151820992A00619ECB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2243AD191820992A00619ECB /* Crave-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Crave-Info.plist"; sourceTree = "<group>"; };
 		2243AD1B1820992A00619ECB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2243AD1D1820992A00619ECB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2243AD1F1820992A00619ECB /* Crave-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Crave-Prefix.pch"; sourceTree = "<group>"; };
+		2243AD1F1820992A00619ECB /* Save21-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Save21-Prefix.pch"; sourceTree = "<group>"; };
 		2243AD201820992A00619ECB /* CraveAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CraveAppDelegate.h; sourceTree = "<group>"; };
 		2243AD211820992A00619ECB /* CraveAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CraveAppDelegate.m; sourceTree = "<group>"; };
 		2243AD291820992A00619ECB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		2243AD2F1820992A00619ECB /* CraveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CraveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2243AD2F1820992A00619ECB /* Save21Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Save21Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2243AD301820992A00619ECB /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		2243AD381820992A00619ECB /* Save21Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Save21Tests-Info.plist"; sourceTree = "<group>"; };
 		2243AD3A1820992A00619ECB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -361,8 +395,8 @@
 		22A600CB186BEA15008B18BD /* CameraOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraOverlay.h; sourceTree = "<group>"; };
 		22A600CC186BEA15008B18BD /* CameraOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraOverlay.m; sourceTree = "<group>"; };
 		22A600CD186BEA15008B18BD /* CameraOverlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CameraOverlay.xib; sourceTree = "<group>"; };
-		22A600D0186BEEA7008B18BD /* overlay_iphone4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlay_iphone4.png; sourceTree = "<group>"; };
-		22A600D1186BEEA7008B18BD /* overlay_iphone5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlay_iphone5.png; sourceTree = "<group>"; };
+		22C054AB187990D800848A1A /* overlay_iphone5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlay_iphone5.png; sourceTree = "<group>"; };
+		22C054AD1879919600848A1A /* overlay_iphone4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlay_iphone4.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -402,7 +436,7 @@
 		2243AD051820992A00619ECB = {
 			isa = PBXGroup;
 			children = (
-				2243AD171820992A00619ECB /* Crave */,
+				2243AD171820992A00619ECB /* Save21 */,
 				2243AD361820992A00619ECB /* Save21Tests */,
 				2243AD101820992A00619ECB /* Frameworks */,
 				2243AD0F1820992A00619ECB /* Products */,
@@ -412,8 +446,8 @@
 		2243AD0F1820992A00619ECB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2243AD0E1820992A00619ECB /* Crave.app */,
-				2243AD2F1820992A00619ECB /* CraveTests.xctest */,
+				2243AD0E1820992A00619ECB /* Save21.app */,
+				2243AD2F1820992A00619ECB /* Save21Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -439,7 +473,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		2243AD171820992A00619ECB /* Crave */ = {
+		2243AD171820992A00619ECB /* Save21 */ = {
 			isa = PBXGroup;
 			children = (
 				2243AE5D18209FB300619ECB /* Custom Segues */,
@@ -454,7 +488,6 @@
 				2243AE641820A0D400619ECB /* View Controllers */,
 				2243AE651820A16700619ECB /* Views */,
 			);
-			name = Crave;
 			path = Save21;
 			sourceTree = "<group>";
 		};
@@ -462,9 +495,10 @@
 			isa = PBXGroup;
 			children = (
 				2243AD191820992A00619ECB /* Crave-Info.plist */,
+				22008CE5187999C800468F4F /* Crave-Info.plist */,
 				2243AD1A1820992A00619ECB /* InfoPlist.strings */,
 				2243AD1D1820992A00619ECB /* main.m */,
-				2243AD1F1820992A00619ECB /* Crave-Prefix.pch */,
+				2243AD1F1820992A00619ECB /* Save21-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -472,6 +506,7 @@
 		2243AD361820992A00619ECB /* Save21Tests */ = {
 			isa = PBXGroup;
 			children = (
+				22008CE718799A7600468F4F /* Save21Tests-Info.plist */,
 				2243AD371820992A00619ECB /* Supporting Files */,
 				227BF3241851E3D700A87652 /* Fake Objects */,
 				2243AD3C1820992A00619ECB /* Save21Tests.m */,
@@ -506,7 +541,6 @@
 				22A600AB18691B83008B18BD /* Insturctions Overlay Image.png */,
 				2202CC8D185A76060031B19D /* Email Login Icon */,
 				2202CC8E185A76060031B19D /* Password Login Icon.png */,
-				2202CC89185A6B1A0031B19D /* Load Screen Logo.png */,
 				2202CC8B185A74340031B19D /* Camera Button.png */,
 				22A600901867F45E008B18BD /* cancel.png */,
 				2243AD8118209C4700619ECB /* account.png */,
@@ -522,6 +556,22 @@
 				22A600941867F4B5008B18BD /* Back.png */,
 				22A600951867F4B5008B18BD /* Phone Icon.png */,
 				22A600961867F4B5008B18BD /* Pin.png */,
+				22008CC5187997EA00468F4F /* Icon-40.png */,
+				22008CC6187997EA00468F4F /* Icon-40@2x.png */,
+				22008CC7187997EA00468F4F /* Icon-60.png */,
+				22008CC8187997EB00468F4F /* Icon-60@2x.png */,
+				22008CC9187997EB00468F4F /* Icon-72.png */,
+				22008CCA187997EB00468F4F /* Icon-72@2x.png */,
+				22008CCB187997EB00468F4F /* Icon-76.png */,
+				22008CCC187997EB00468F4F /* Icon-76@2x.png */,
+				22008CCD187997EB00468F4F /* Icon-Small-50.png */,
+				22008CCE187997EB00468F4F /* Icon-Small-50@2x.png */,
+				22008CCF187997EB00468F4F /* Icon-Small.png */,
+				22008CD0187997EB00468F4F /* Icon-Small@2x.png */,
+				22008CD1187997EB00468F4F /* Icon.png */,
+				22008CD2187997EB00468F4F /* Icon@2x.png */,
+				22008CD3187997EB00468F4F /* iTunesArtwork.png */,
+				22008CD4187997EB00468F4F /* iTunesArtwork@2x.png */,
 				22A600A718691AEA008B18BD /* Back To Pictures.png */,
 				22A600A818691AEA008B18BD /* Upload.png */,
 				22A600971867F4B5008B18BD /* Question Mark.png */,
@@ -531,13 +581,13 @@
 				2243AD8A18209C4700619ECB /* compose.png */,
 				2243AD8B18209C4700619ECB /* compose@2x.png */,
 				2243AD8C18209C4700619ECB /* envelope.png */,
+				22C054AD1879919600848A1A /* overlay_iphone4.png */,
 				2243AD8D18209C4700619ECB /* envelope@2x.png */,
+				22C054AB187990D800848A1A /* overlay_iphone5.png */,
 				2243AD9518209C4700619ECB /* menu.png */,
 				2243AD9618209C4700619ECB /* menu@2x.png */,
 				2243AD9B18209C4700619ECB /* settings.png */,
 				2243AD9C18209C4700619ECB /* settings@2x.png */,
-				22A600D0186BEEA7008B18BD /* overlay_iphone4.png */,
-				22A600D1186BEEA7008B18BD /* overlay_iphone5.png */,
 				2243AD9E18209C4700619ECB /* user icon 130px.png */,
 			);
 			name = Resources;
@@ -865,9 +915,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2243AD0D1820992A00619ECB /* Crave */ = {
+		2243AD0D1820992A00619ECB /* Save21 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2243AD401820992A00619ECB /* Build configuration list for PBXNativeTarget "Crave" */;
+			buildConfigurationList = 2243AD401820992A00619ECB /* Build configuration list for PBXNativeTarget "Save21" */;
 			buildPhases = (
 				2243AD0A1820992A00619ECB /* Sources */,
 				2243AD0B1820992A00619ECB /* Frameworks */,
@@ -877,14 +927,14 @@
 			);
 			dependencies = (
 			);
-			name = Crave;
+			name = Save21;
 			productName = Save21;
-			productReference = 2243AD0E1820992A00619ECB /* Crave.app */;
+			productReference = 2243AD0E1820992A00619ECB /* Save21.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2243AD2E1820992A00619ECB /* CraveTests */ = {
+		2243AD2E1820992A00619ECB /* Save21Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2243AD431820992A00619ECB /* Build configuration list for PBXNativeTarget "CraveTests" */;
+			buildConfigurationList = 2243AD431820992A00619ECB /* Build configuration list for PBXNativeTarget "Save21Tests" */;
 			buildPhases = (
 				2243AD2B1820992A00619ECB /* Sources */,
 				2243AD2C1820992A00619ECB /* Frameworks */,
@@ -895,9 +945,9 @@
 			dependencies = (
 				2243AD351820992A00619ECB /* PBXTargetDependency */,
 			);
-			name = CraveTests;
+			name = Save21Tests;
 			productName = Save21Tests;
-			productReference = 2243AD2F1820992A00619ECB /* CraveTests.xctest */;
+			productReference = 2243AD2F1820992A00619ECB /* Save21Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -906,7 +956,7 @@
 		2243AD061820992A00619ECB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = Crave;
+				CLASSPREFIX = Save21;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Feiyang Chen";
 				TargetAttributes = {
@@ -918,7 +968,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2243AD091820992A00619ECB /* Build configuration list for PBXProject "Crave" */;
+			buildConfigurationList = 2243AD091820992A00619ECB /* Build configuration list for PBXProject "Save21" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -931,8 +981,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2243AD0D1820992A00619ECB /* Crave */,
-				2243AD2E1820992A00619ECB /* CraveTests */,
+				2243AD0D1820992A00619ECB /* Save21 */,
+				2243AD2E1820992A00619ECB /* Save21Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -942,7 +992,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22008CDB187997EB00468F4F /* Icon-76.png in Resources */,
 				2243ADBA18209C4700619ECB /* settings@2x.png in Resources */,
+				22008CDE187997EB00468F4F /* Icon-Small-50@2x.png in Resources */,
+				22008CDD187997EB00468F4F /* Icon-Small-50.png in Resources */,
 				2202CC90185A76060031B19D /* Password Login Icon.png in Resources */,
 				22A600AE18691BDC008B18BD /* Camera Button Fade.png in Resources */,
 				22A600A6186918E6008B18BD /* Next.png in Resources */,
@@ -951,36 +1004,49 @@
 				2243ADA418209C4700619ECB /* check.png in Resources */,
 				2243ADB418209C4700619ECB /* menu@2x.png in Resources */,
 				22A600CF186BEA15008B18BD /* CameraOverlay.xib in Resources */,
+				22008CDC187997EB00468F4F /* Icon-76@2x.png in Resources */,
 				2243AD2A1820992A00619ECB /* Images.xcassets in Resources */,
 				2243ADB918209C4700619ECB /* settings.png in Resources */,
+				22008CE4187997EB00468F4F /* iTunesArtwork@2x.png in Resources */,
 				2243ADA118209C4700619ECB /* arrow.png in Resources */,
 				22A600931867F4A7008B18BD /* Gear Icon.png in Resources */,
 				2243AD1C1820992A00619ECB /* InfoPlist.strings in Resources */,
+				22008CD9187997EB00468F4F /* Icon-72.png in Resources */,
+				22008CE6187999C800468F4F /* Crave-Info.plist in Resources */,
 				2243ADA218209C4700619ECB /* arrow@2x.png in Resources */,
 				2243AE4818209CEF00619ECB /* user.png in Resources */,
 				2243AE4718209CEF00619ECB /* searchTextBG.png in Resources */,
+				22008CE3187997EB00468F4F /* iTunesArtwork.png in Resources */,
 				2202CC8F185A76060031B19D /* Email Login Icon in Resources */,
-				2202CC8A185A6B1A0031B19D /* Load Screen Logo.png in Resources */,
+				22008CE0187997EB00468F4F /* Icon-Small@2x.png in Resources */,
 				2243ADB318209C4700619ECB /* menu.png in Resources */,
 				2243ADA518209C4700619ECB /* check@2x.png in Resources */,
+				22008CD6187997EB00468F4F /* Icon-40@2x.png in Resources */,
+				22008CD5187997EB00468F4F /* Icon-40.png in Resources */,
 				2243AE4418209CEF00619ECB /* searchBarBG.png in Resources */,
+				22008CDF187997EB00468F4F /* Icon-Small.png in Resources */,
 				22A6009B1867F4B5008B18BD /* Question Mark.png in Resources */,
 				2243ADA818209C4700619ECB /* compose.png in Resources */,
 				2243ADA018209C4700619ECB /* account@2x.png in Resources */,
-				22A600D3186BEEA7008B18BD /* overlay_iphone5.png in Resources */,
 				2243AD471820995E00619ECB /* MainStoryboard.storyboard in Resources */,
 				2243ADAB18209C4700619ECB /* envelope@2x.png in Resources */,
+				22008CE1187997EB00468F4F /* Icon.png in Resources */,
 				2243ADA618209C4700619ECB /* comment.png in Resources */,
 				22A600AC18691B83008B18BD /* Insturctions Overlay Image.png in Resources */,
+				22008CD8187997EB00468F4F /* Icon-60@2x.png in Resources */,
 				22A600981867F4B5008B18BD /* Back.png in Resources */,
 				2202CC8C185A74340031B19D /* Camera Button.png in Resources */,
+				22008CD7187997EB00468F4F /* Icon-60.png in Resources */,
+				22C054AC187990D800848A1A /* overlay_iphone5.png in Resources */,
 				22A6009A1867F4B5008B18BD /* Pin.png in Resources */,
+				22008CDA187997EB00468F4F /* Icon-72@2x.png in Resources */,
 				22A600911867F45E008B18BD /* cancel.png in Resources */,
 				22A600A918691AEA008B18BD /* Back To Pictures.png in Resources */,
 				2243ADA918209C4700619ECB /* compose@2x.png in Resources */,
+				22008CE2187997EB00468F4F /* Icon@2x.png in Resources */,
+				22C054AE1879919600848A1A /* overlay_iphone4.png in Resources */,
 				22A600AA18691AEA008B18BD /* Upload.png in Resources */,
 				2243ADAA18209C4700619ECB /* envelope.png in Resources */,
-				22A600D2186BEEA7008B18BD /* overlay_iphone4.png in Resources */,
 				2243AE4518209CEF00619ECB /* searchBarIcon.png in Resources */,
 				22A600991867F4B5008B18BD /* Phone Icon.png in Resources */,
 				22A6009D1867F5E9008B18BD /* Instructions.png in Resources */,
@@ -995,6 +1061,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22008CE818799A7600468F4F /* Save21Tests-Info.plist in Resources */,
 				2243AD3B1820992A00619ECB /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1093,7 +1160,7 @@
 /* Begin PBXTargetDependency section */
 		2243AD351820992A00619ECB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2243AD0D1820992A00619ECB /* Crave */;
+			target = 2243AD0D1820992A00619ECB /* Save21 */;
 			targetProxy = 2243AD341820992A00619ECB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1204,9 +1271,9 @@
 					/Users/feiyangca/Dropbox/Save21,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Save21/Crave-Prefix.pch";
+				GCC_PREFIX_HEADER = "Save21/Save21-Prefix.pch";
 				INFOPLIST_FILE = "Save21/Crave-Info.plist";
-				PRODUCT_NAME = Crave;
+				PRODUCT_NAME = Save21;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -1226,9 +1293,9 @@
 					/Users/feiyangca/Dropbox/Save21,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Save21/Crave-Prefix.pch";
+				GCC_PREFIX_HEADER = "Save21/Save21-Prefix.pch";
 				INFOPLIST_FILE = "Save21/Crave-Info.plist";
-				PRODUCT_NAME = Crave;
+				PRODUCT_NAME = Save21;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -1252,7 +1319,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "Save21Tests/Save21Tests-Info.plist";
-				PRODUCT_NAME = CraveTests;
+				PRODUCT_NAME = Save21Tests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1271,7 +1338,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Save21/Save21-Prefix.pch";
 				INFOPLIST_FILE = "Save21Tests/Save21Tests-Info.plist";
-				PRODUCT_NAME = CraveTests;
+				PRODUCT_NAME = Save21Tests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1280,7 +1347,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2243AD091820992A00619ECB /* Build configuration list for PBXProject "Crave" */ = {
+		2243AD091820992A00619ECB /* Build configuration list for PBXProject "Save21" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2243AD3E1820992A00619ECB /* Debug */,
@@ -1289,7 +1356,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2243AD401820992A00619ECB /* Build configuration list for PBXNativeTarget "Crave" */ = {
+		2243AD401820992A00619ECB /* Build configuration list for PBXNativeTarget "Save21" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2243AD411820992A00619ECB /* Debug */,
@@ -1298,7 +1365,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2243AD431820992A00619ECB /* Build configuration list for PBXNativeTarget "CraveTests" */ = {
+		2243AD431820992A00619ECB /* Build configuration list for PBXNativeTarget "Save21Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2243AD441820992A00619ECB /* Debug */,
